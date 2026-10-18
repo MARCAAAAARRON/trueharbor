@@ -22,6 +22,7 @@ class ProductResource extends JsonResource
             'price_cents' => $this->price_cents,
             'formatted_price' => '₱' . number_format($this->price_cents / 100, 2),
             'stock' => $this->stock,
+            'image_path' => $this->image_path,
             'image_url' => $this->image_path,
             'in_stock' => $this->stock > 0,
             'is_active' => $this->is_active,

@@ -169,6 +169,7 @@ class AdminOperationsTest extends TestCase
             'description' => 'Traditional ringing brass bell for quarterdecks.',
             'price_cents' => 89000,
             'stock' => 12,
+            'image_path' => 'https://res.cloudinary.com/trueharbor/image/upload/v1/provisions/ship-bell.jpg',
             'is_active' => true,
         ]);
 
@@ -176,12 +177,14 @@ class AdminOperationsTest extends TestCase
             ->assertJsonPath('data.name', 'Brass Ship Bell')
             ->assertJsonPath('data.slug', 'brass-ship-bell')
             ->assertJsonPath('data.price_cents', 89000)
-            ->assertJsonPath('data.stock', 12);
+            ->assertJsonPath('data.stock', 12)
+            ->assertJsonPath('data.image_path', 'https://res.cloudinary.com/trueharbor/image/upload/v1/provisions/ship-bell.jpg');
 
         $this->assertDatabaseHas('products', [
             'name' => 'Brass Ship Bell',
             'slug' => 'brass-ship-bell',
             'stock' => 12,
+            'image_path' => 'https://res.cloudinary.com/trueharbor/image/upload/v1/provisions/ship-bell.jpg',
         ]);
     }
 
@@ -193,14 +196,20 @@ class AdminOperationsTest extends TestCase
             'name' => 'Forged Galvanized Anchor',
             'price_cents' => 399000,
             'description' => 'Updated forged steel anchor description.',
+            'image_path' => 'https://res.cloudinary.com/trueharbor/image/upload/v2/provisions/anchor-forged.jpg',
         ]);
 
         $response->assertOk()
             ->assertJsonPath('data.name', 'Forged Galvanized Anchor')
-            ->assertJsonPath('data.price_cents', 399000);
+            ->assertJsonPath('data.price_cents', 399000)
+            ->assertJsonPath('data.image_path', 'https://res.cloudinary.com/trueharbor/image/upload/v2/provisions/anchor-forged.jpg');
 
         $this->assertEquals('Forged Galvanized Anchor', $this->product->fresh()->name);
         $this->assertEquals(399000, $this->product->fresh()->price_cents);
+        $this->assertEquals(
+            'https://res.cloudinary.com/trueharbor/image/upload/v2/provisions/anchor-forged.jpg',
+            $this->product->fresh()->image_path
+        );
     }
 
     public function test_admin_can_delete_product(): void
