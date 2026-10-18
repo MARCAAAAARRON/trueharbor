@@ -9,17 +9,13 @@ interface ProductCardProps {
   className?: string;
 }
 
-const DEFAULT_CATEGORY_IMAGES: Record<string, string> = {
-  outdoor: '/assets/2016-11-13-01-kjeungskj-r-lighthouse.jpg',
-  apparel: '/assets/paphos-cyprus-panoramio-119.jpg',
-  home: '/assets/a-coastal-view-with-a-lighthouse.jpg',
-  accessories: '/assets/rocks-at-the-lighthouse-biarritz.jpg',
-};
+const DEFAULT_PLACEHOLDER = '/placeholder-product.svg';
 
 export default function ProductCard({ product, className = '' }: ProductCardProps) {
-  const catSlug = product.category?.slug || 'outdoor';
-  const fallbackAsset = DEFAULT_CATEGORY_IMAGES[catSlug] || '/assets/a-coastal-view-with-a-lighthouse.jpg';
-  const imageUrl = product.image_url || product.image_path || fallbackAsset;
+  const imageUrl =
+    product.image_url ||
+    product.image_path ||
+    (product.slug ? `/images/products/${product.slug}.jpg` : DEFAULT_PLACEHOLDER);
 
   return (
     <Link
@@ -34,7 +30,10 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
           loading="lazy"
           className="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-200"
           onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = fallbackAsset;
+            const target = e.currentTarget as HTMLImageElement;
+            if (!target.src.endsWith(DEFAULT_PLACEHOLDER)) {
+              target.src = DEFAULT_PLACEHOLDER;
+            }
           }}
         />
       </div>

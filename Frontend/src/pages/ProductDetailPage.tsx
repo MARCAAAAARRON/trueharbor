@@ -150,7 +150,7 @@ export default function ProductDetailPage() {
     '@context': 'https://schema.org/',
     '@type': 'Product',
     name: product.name,
-    image: product.image_url || product.image_path,
+    image: product.image_url || product.image_path || '/placeholder-product.svg',
     description: product.description,
     sku: `TH-${product.id}`,
     offers: {

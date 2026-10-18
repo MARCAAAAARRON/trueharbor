@@ -7,17 +7,9 @@ interface ProductGalleryProps {
   className?: string;
 }
 
-const DEFAULT_CATEGORY_IMAGES: Record<string, string> = {
-  outdoor: '/assets/2016-11-13-01-kjeungskj-r-lighthouse.jpg',
-  apparel: '/assets/paphos-cyprus-panoramio-119.jpg',
-  home: '/assets/a-coastal-view-with-a-lighthouse.jpg',
-  accessories: '/assets/rocks-at-the-lighthouse-biarritz.jpg',
-};
+const DEFAULT_PLACEHOLDER = '/placeholder-product.svg';
 
 export default function ProductGallery({ product, className = '' }: ProductGalleryProps) {
-  const catSlug = product.category?.slug || 'outdoor';
-  const fallbackAsset = DEFAULT_CATEGORY_IMAGES[catSlug] || '/assets/a-coastal-view-with-a-lighthouse.jpg';
-
   // Aggregate all gallery images
   const galleryUrls: string[] = [];
   if (product.images && product.images.length > 0) {
@@ -33,8 +25,13 @@ export default function ProductGallery({ product, className = '' }: ProductGalle
     galleryUrls.unshift(product.image_url);
   }
 
+  // If empty, also check if local product slug photo exists or use placeholder
+  if (galleryUrls.length === 0 && product.slug) {
+    galleryUrls.push(`/images/products/${product.slug}.jpg`);
+  }
+
   // If completely empty, use fallback
-  const images = galleryUrls.length > 0 ? galleryUrls : [fallbackAsset];
+  const images = galleryUrls.length > 0 ? galleryUrls : [DEFAULT_PLACEHOLDER];
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [prevProductId, setPrevProductId] = useState(product.id);
@@ -95,7 +92,10 @@ export default function ProductGallery({ product, className = '' }: ProductGalle
               : undefined
           }
           onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = fallbackAsset;
+            const target = e.currentTarget as HTMLImageElement;
+            if (!target.src.endsWith(DEFAULT_PLACEHOLDER)) {
+              target.src = DEFAULT_PLACEHOLDER;
+            }
           }}
         />
 
@@ -167,7 +167,10 @@ export default function ProductGallery({ product, className = '' }: ProductGalle
                   alt={`Thumbnail ${idx + 1}`}
                   className="w-full h-full object-contain object-center"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = fallbackAsset;
+                    const target = e.currentTarget as HTMLImageElement;
+                    if (!target.src.endsWith(DEFAULT_PLACEHOLDER)) {
+                      target.src = DEFAULT_PLACEHOLDER;
+                    }
                   }}
                 />
               </button>

@@ -60,7 +60,7 @@ class CatalogSeeder extends Seeder
                     'description' => "{$name}: a sample product for the TrueHarbor demo store.",
                     'price_cents' => $price,
                     'stock' => $stock,
-                    'image_path' => "https://picsum.photos/seed/{$slug}/600/600",
+                    'image_path' => null,
                     'is_active' => $row[4] ?? true,
                 ],
             );
