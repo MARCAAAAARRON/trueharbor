@@ -105,9 +105,13 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (activeTab === 'orders') fetchOrders();
-    if (activeTab === 'inventory') fetchProducts();
-    if (activeTab === 'alerts') fetchAlerts();
+    const timer = setTimeout(() => {
+      if (activeTab === 'orders') void fetchOrders();
+      if (activeTab === 'inventory') void fetchProducts();
+      if (activeTab === 'alerts') void fetchAlerts();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [activeTab, fetchOrders, fetchProducts, fetchAlerts]);
 
   // Order Status Transition Handler

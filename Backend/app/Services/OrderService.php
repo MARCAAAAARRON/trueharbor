@@ -114,37 +114,7 @@ class OrderService
      */
     protected function attachPaymentIntent(Order $order): void
     {
-        $stripeSecret = config('services.stripe.secret');
-
-        if ($stripeSecret && !str_contains($stripeSecret, 'placeholder')) {
-            try {
-                Stripe::setApiKey($stripeSecret);
-                $intent = PaymentIntent::create([
-                    'amount' => $order->total_cents,
-                    'currency' => 'php',
-                    'metadata' => [
-                        'order_id' => (string) $order->id,
-                        'user_id' => (string) $order->user_id,
-                    ],
-                    'automatic_payment_methods' => [
-                        'enabled' => true,
-                    ],
-                ]);
-
-                $order->update(['payment_intent_id' => $intent->id]);
-                $order->client_secret = $intent->client_secret;
-                return;
-            } catch (\Exception $e) {
-                Log::warning('Stripe API error, falling back to test mock: ' . $e->getMessage());
-            }
-        }
-
-        // Test/local development mock
-        $mockId = 'pi_test_' . $order->id . '_' . bin2hex(random_bytes(6));
-        $mockSecret = $mockId . '_secret_' . bin2hex(random_bytes(10));
-
-        $order->update(['payment_intent_id' => $mockId]);
-        $order->client_secret = $mockSecret;
+        app(PaymentService::class)->createPaymentIntent($order);
     }
 
     /**
