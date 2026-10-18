@@ -24,6 +24,15 @@ export interface Category {
   slug: string;
 }
 
+export interface ProductImage {
+  id: number;
+  product_id: number;
+  url: string;
+  alt_text?: string | null;
+  sort_order: number;
+  is_primary: boolean;
+}
+
 export interface Product {
   id: number;
   category_id?: number;
@@ -38,6 +47,7 @@ export interface Product {
   image_path?: string | null;
   in_stock?: boolean;
   is_active?: boolean;
+  images?: ProductImage[];
 }
 
 export interface CartItem {

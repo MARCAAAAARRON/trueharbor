@@ -1,5 +1,5 @@
 import client from './client';
-import type { Order, Product, OrderStatus, PaginatedResponse } from '../types/api';
+import type { Order, Product, ProductImage, OrderStatus, PaginatedResponse } from '../types/api';
 
 export interface CreateProductInput {
   name: string;
@@ -8,7 +8,7 @@ export interface CreateProductInput {
   description: string;
   price_cents: number;
   stock: number;
-  image_path?: string;
+  image_path?: string | null;
   is_active?: boolean;
 }
 
@@ -137,5 +137,31 @@ export const adminApi = {
       reader.onerror = () => reject(new Error('Failed to read image file'));
       reader.readAsDataURL(file);
     });
+  },
+
+  // Multi-Image Gallery Management
+  addProductGalleryImage: async (
+    productId: number,
+    url: string,
+    altText?: string,
+    isPrimary?: boolean
+  ): Promise<ProductImage> => {
+    const res = await client.post<{ data: ProductImage }>(`/admin/products/${productId}/images`, {
+      url,
+      alt_text: altText,
+      is_primary: isPrimary,
+    });
+    return res.data.data;
+  },
+
+  deleteProductGalleryImage: async (productId: number, imageId: number): Promise<void> => {
+    await client.delete(`/admin/products/${productId}/images/${imageId}`);
+  },
+
+  setPrimaryGalleryImage: async (productId: number, imageId: number): Promise<ProductImage> => {
+    const res = await client.patch<{ data: ProductImage }>(
+      `/admin/products/${productId}/images/${imageId}/primary`
+    );
+    return res.data.data;
   },
 };

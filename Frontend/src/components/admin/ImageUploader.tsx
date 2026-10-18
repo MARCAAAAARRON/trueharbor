@@ -4,7 +4,7 @@ import { adminApi, type CloudinarySignatureData } from '../../api/admin';
 import Button from '../Button';
 
 interface ImageUploaderProps {
-  value?: string;
+  value?: string | null;
   onChange: (url: string) => void;
   className?: string;
 }

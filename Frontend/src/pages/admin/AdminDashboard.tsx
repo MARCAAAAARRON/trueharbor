@@ -17,6 +17,7 @@ import AdminNavbar from '../../components/admin/AdminNavbar';
 import Button from '../../components/Button';
 import StatusChip from '../../components/StatusChip';
 import ImageUploader from '../../components/admin/ImageUploader';
+import ProductGalleryManager from '../../components/admin/ProductGalleryManager';
 import { useToast } from '../../context/ToastContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { adminApi, type CreateProductInput } from '../../api/admin';
@@ -971,10 +972,14 @@ export default function AdminDashboard() {
                 </span>
               </div>
 
-              {/* Cloudinary Image Uploader */}
-              <ImageUploader
-                value={editForm.image_path}
-                onChange={(url) => setEditForm({ ...editForm, image_path: url })}
+              {/* Multi-Angle Product Gallery Manager */}
+              <ProductGalleryManager
+                product={editingProduct}
+                onUpdate={(updated) => {
+                  setEditingProduct(updated);
+                  setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+                  setEditForm((f) => ({ ...f, image_path: updated.image_path ?? null }));
+                }}
               />
 
               <div>
