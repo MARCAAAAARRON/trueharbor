@@ -158,4 +158,94 @@ class AdminOperationsTest extends TestCase
         // Stock restored back to 3
         $this->assertEquals(3, $this->product->fresh()->stock);
     }
+
+    public function test_admin_can_create_product_with_slug_generation(): void
+    {
+        Sanctum::actingAs($this->admin);
+
+        $response = $this->postJson('/api/admin/products', [
+            'category_id' => $this->category->id,
+            'name' => 'Brass Ship Bell',
+            'description' => 'Traditional ringing brass bell for quarterdecks.',
+            'price_cents' => 89000,
+            'stock' => 12,
+            'is_active' => true,
+        ]);
+
+        $response->assertCreated()
+            ->assertJsonPath('data.name', 'Brass Ship Bell')
+            ->assertJsonPath('data.slug', 'brass-ship-bell')
+            ->assertJsonPath('data.price_cents', 89000)
+            ->assertJsonPath('data.stock', 12);
+
+        $this->assertDatabaseHas('products', [
+            'name' => 'Brass Ship Bell',
+            'slug' => 'brass-ship-bell',
+            'stock' => 12,
+        ]);
+    }
+
+    public function test_admin_can_update_product_details(): void
+    {
+        Sanctum::actingAs($this->admin);
+
+        $response = $this->putJson("/api/admin/products/{$this->product->id}", [
+            'name' => 'Forged Galvanized Anchor',
+            'price_cents' => 399000,
+            'description' => 'Updated forged steel anchor description.',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('data.name', 'Forged Galvanized Anchor')
+            ->assertJsonPath('data.price_cents', 399000);
+
+        $this->assertEquals('Forged Galvanized Anchor', $this->product->fresh()->name);
+        $this->assertEquals(399000, $this->product->fresh()->price_cents);
+    }
+
+    public function test_admin_can_delete_product(): void
+    {
+        Sanctum::actingAs($this->admin);
+
+        $response = $this->deleteJson("/api/admin/products/{$this->product->id}");
+        $response->assertOk()
+            ->assertJsonPath('message', 'Product removed successfully.');
+
+        $this->assertDatabaseMissing('products', [
+            'id' => $this->product->id,
+        ]);
+    }
+
+    public function test_admin_can_filter_orders_by_search_term_and_status(): void
+    {
+        Sanctum::actingAs($this->customer);
+        $this->postJson('/api/cart', ['product_id' => $this->product->id, 'quantity' => 1]);
+        $this->postJson('/api/checkout', [
+            'shipping_address' => [
+                'name' => 'Admiral Nelson',
+                'line1' => 'Portsmouth Way',
+                'city' => 'Manila',
+                'province' => 'Metro Manila',
+                'postal_code' => '1000',
+                'phone' => '+639170001122',
+            ],
+        ]);
+
+        Sanctum::actingAs($this->admin);
+
+        // Search by customer name
+        $searchResponse = $this->getJson("/api/admin/orders?search=" . urlencode($this->customer->name));
+        $searchResponse->assertOk()
+            ->assertJsonCount(1, 'data');
+
+        // Filter by pending status
+        $statusResponse = $this->getJson('/api/admin/orders?status=pending');
+        $statusResponse->assertOk()
+            ->assertJsonCount(1, 'data');
+
+        // Filter by non-matching status
+        $emptyResponse = $this->getJson('/api/admin/orders?status=delivered');
+        $emptyResponse->assertOk()
+            ->assertJsonCount(0, 'data');
+    }
 }

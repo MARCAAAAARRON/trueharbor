@@ -27,14 +27,15 @@ class AdminOrderController extends Controller
         if ($request->filled('search')) {
             $term = trim($request->query('search'));
             $cleanId = ltrim(preg_replace('/[^0-9]/', '', $term), '0');
+            $likeOp = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
 
-            $query->where(function ($q) use ($term, $cleanId) {
+            $query->where(function ($q) use ($term, $cleanId, $likeOp) {
                 if (!empty($cleanId)) {
                     $q->orWhere('id', (int) $cleanId);
                 }
-                $q->orWhereHas('user', function ($uq) use ($term) {
-                    $uq->where('name', 'ilike', "%{$term}%")
-                       ->orWhere('email', 'ilike', "%{$term}%");
+                $q->orWhereHas('user', function ($uq) use ($term, $likeOp) {
+                    $uq->where('name', $likeOp, "%{$term}%")
+                       ->orWhere('email', $likeOp, "%{$term}%");
                 });
             });
         }

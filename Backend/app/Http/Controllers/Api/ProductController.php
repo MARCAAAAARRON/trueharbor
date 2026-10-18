@@ -25,7 +25,8 @@ class ProductController extends Controller
 
         if (!empty($params['q'])) {
             $term = addcslashes($params['q'], '%_\\');
-            $query->where('name', 'ilike', "%{$term}%");
+            $likeOp = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+            $query->where('name', $likeOp, "%{$term}%");
         }
 
         if (!empty($params['category'])) {

@@ -26,7 +26,8 @@ class AdminProductController extends Controller
 
         if ($request->filled('search')) {
             $term = trim($request->query('search'));
-            $query->where('name', 'ilike', "%{$term}%");
+            $likeOp = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+            $query->where('name', $likeOp, "%{$term}%");
         }
 
         $products = $query->paginate(20);
