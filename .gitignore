@@ -1,0 +1,45 @@
+# Environment files (Never commit secrets)
+.env
+.env.*
+!.env.example
+*.env
+
+# Agent & AI skills / local tools (Per user instructions)
+.agents/
+.taste-skill/
+skills-lock.json
+graphify-out/
+
+# Dependencies
+vendor/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+dist-ssr/
+public/build/
+public/hot/
+
+# Storage & Cache
+storage/*.key
+storage/logs/*.log
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+.phpunit.result.cache
+.phpunit.cache/
+
+# System and Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

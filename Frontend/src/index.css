@@ -1,0 +1,100 @@
+@import "tailwindcss";
+@import "./styles/tokens.css";
+
+@theme {
+  --color-harbor: var(--color-harbor);
+  --color-harbor-hover: var(--color-harbor-hover);
+  --color-tide: var(--color-tide);
+  --color-lantern: var(--color-lantern);
+  --color-mist: var(--color-mist);
+  --color-white: var(--color-white);
+  --color-slate: var(--color-slate);
+  --color-fog: var(--color-fog);
+  --color-edge: var(--color-edge);
+  --color-wash: var(--color-wash);
+  --color-sea: var(--color-sea);
+  --color-sea-tint: var(--color-sea-tint);
+  --color-buoy: var(--color-buoy);
+  --color-buoy-tint: var(--color-buoy-tint);
+
+  --font-display: "Rubik", system-ui, sans-serif;
+  --font-body: "Rubik", system-ui, -apple-system, sans-serif;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+}
+
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+html, body {
+  margin: 0;
+  overflow-x: clip;
+}
+
+body {
+  background-color: var(--color-white);
+  color: var(--color-tide);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Tabular numerals for monetary alignment */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Accessible focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-harbor);
+  outline-offset: 2px;
+}
+
+/* Motion choreography tokens */
+@keyframes enterUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-enter-1 {
+  animation: enterUp 0.6s var(--ease-out) 0.05s backwards;
+}
+.animate-enter-2 {
+  animation: enterUp 0.6s var(--ease-out) 0.12s backwards;
+}
+.animate-enter-3 {
+  animation: enterUp 0.6s var(--ease-out) 0.18s backwards;
+}
+.animate-enter-4 {
+  animation: enterUp 0.6s var(--ease-out) 0.24s backwards;
+}
+.animate-enter-5 {
+  animation: enterUp 0.6s var(--ease-out) 0.30s backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
