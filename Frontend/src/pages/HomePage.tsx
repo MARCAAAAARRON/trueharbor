@@ -70,7 +70,7 @@ export default function HomePage() {
             className="w-full h-full object-cover object-[75%_center] sm:object-right select-none opacity-90"
           />
           {/* Gradient Scrim: Deep harbor blue fading from solid/high-opacity on left to translucent on right */}
-          <div className="absolute inset-0 bg-gradient-to-r from-harbor/95 via-harbor/85 to-harbor/30 sm:to-transparent dark:from-[#070e1b]/95 dark:via-[#070e1b]/85 dark:to-[#070e1b]/35" />
+          <div className="absolute inset-0 bg-gradient-to-r from-harbor/95 via-harbor/85 to-harbor/30 sm:to-transparent dark:from-[#070e1b]/98 dark:via-[#070e1b]/85 dark:to-transparent" />
           {/* Subtle bottom vignette to blend into next section */}
           <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-harbor/40 dark:from-[#070e1b]/60 to-transparent" />
         </div>
@@ -86,7 +86,7 @@ export default function HomePage() {
               Everyday things,<br className="hidden sm:inline" /> found easily.
             </h1>
 
-            <p className="text-mist/95 dark:text-slate-200 text-base sm:text-lg mb-8 max-w-lg leading-relaxed animate-enter-3 drop-shadow-2xs">
+            <p className="text-slate-100 dark:text-slate-200 text-base sm:text-lg mb-8 max-w-lg leading-relaxed animate-enter-3 drop-shadow-2xs">
               Curated essentials with honest stock counts, precision pricing, and instant checkout dispatch.
             </p>
 

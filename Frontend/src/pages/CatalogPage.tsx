@@ -201,7 +201,7 @@ export default function CatalogPage() {
         </div>
         <div className="relative max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div>
-            <nav className="flex items-center gap-2 text-sm text-mist/80 mb-2">
+            <nav className="flex items-center gap-2 text-sm text-slate-300 mb-2">
               <Link to="/" className="hover:text-white">
                 Home
               </Link>
@@ -217,7 +217,7 @@ export default function CatalogPage() {
             <h1 className="text-3xl sm:text-4xl font-display font-bold text-white">
               {currentQuery ? `Search results for "${currentQuery}"` : activeCategoryName}
             </h1>
-            <p className="text-base text-mist/90 mt-2 max-w-xl">
+            <p className="text-base text-slate-200 mt-2 max-w-xl">
               Authentic coastal gear and utility essentials with verified stock and integer-cents pricing.
             </p>
 
@@ -250,14 +250,14 @@ export default function CatalogPage() {
             </button>
 
             <div className="flex items-center gap-2">
-              <label htmlFor="sort-select" className="text-sm text-mist/90 font-medium hidden sm:inline">
+              <label htmlFor="sort-select" className="text-sm text-slate-200 font-medium hidden sm:inline">
                 Sort:
               </label>
               <select
                 id="sort-select"
                 value={currentSort}
                 onChange={(e) => updateParam('sort', e.target.value)}
-                className="h-10 px-3 py-1 bg-white text-tide rounded-md text-sm focus:outline-none cursor-pointer"
+                className="h-10 px-3 py-1 bg-white dark:bg-slate-900 text-tide dark:text-white border border-transparent dark:border-slate-700 rounded-md text-sm focus:outline-none cursor-pointer"
               >
                 <option value="newest">Newest Arrivals</option>
                 <option value="price_asc">Price: Low to High</option>

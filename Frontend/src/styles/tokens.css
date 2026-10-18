@@ -5,7 +5,7 @@
   --color-tide: #002459;
   --color-lantern: #ffc247;
   --color-mist: #f3f6fb;
-  --color-white: #ffffff;
+  --color-card: #ffffff;
   --color-slate: #4a5b78;
 
   /* Structural & Boundary Support */
@@ -41,14 +41,14 @@
   --color-harbor-hover: #60a5fa;
   --color-tide: #f8fafc;
   --color-lantern: #f59e0b;
-  --color-mist: #0b1120;
-  --color-white: #131d31;
+  --color-mist: #080d19;
+  --color-card: #121c2e;
   --color-slate: #94a3b8;
 
   /* Structural & Boundary Support */
-  --color-fog: #1e293b;
-  --color-edge: #334155;
-  --color-wash: #1a263d;
+  --color-fog: #1c273c;
+  --color-edge: #2c3c58;
+  --color-wash: #162238;
 
   /* Semantic State Colors */
   --color-sea: #10b981;

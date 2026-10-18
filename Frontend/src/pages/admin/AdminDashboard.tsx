@@ -265,12 +265,12 @@ export default function AdminDashboard() {
         <div className="relative max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6">
             <div>
-              <nav className="flex items-center gap-2 text-xs text-mist/80 mb-2">
+              <nav className="flex items-center gap-2 text-xs text-slate-300 mb-2">
                 <Link to="/" className="hover:text-white transition-colors">
                   Home
                 </Link>
                 <span>/</span>
-                <span className="text-mist/80">Back Office</span>
+                <span className="text-slate-300">Back Office</span>
                 <span>/</span>
                 <span className="text-white font-medium">Maritime Operations</span>
               </nav>
@@ -283,7 +283,7 @@ export default function AdminDashboard() {
                   Quarterdeck Active
                 </span>
               </div>
-              <p className="text-sm text-mist/90 mt-2 max-w-xl">
+              <p className="text-sm text-slate-200 mt-2 max-w-xl">
                 Port fulfillment queue, real-time provision inventory, and reserve replenishment.
               </p>
             </div>
@@ -291,13 +291,13 @@ export default function AdminDashboard() {
             {/* Quick Telemetry Indicators */}
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-white/10 rounded-lg px-4 py-3 text-left">
-                <span className="text-[11px] text-mist/80 uppercase font-semibold tracking-wider block">Queue</span>
+                <span className="text-[11px] text-slate-300 uppercase font-semibold tracking-wider block">Queue</span>
                 <span className="text-xl sm:text-2xl font-bold font-display text-white tabular-nums">
                   {orders.length}
                 </span>
               </div>
               <div className="bg-white/10 rounded-lg px-4 py-3 text-left">
-                <span className="text-[11px] text-mist/80 uppercase font-semibold tracking-wider block">Provisions</span>
+                <span className="text-[11px] text-slate-300 uppercase font-semibold tracking-wider block">Provisions</span>
                 <span className="text-xl sm:text-2xl font-bold font-display text-white tabular-nums">
                   {products.length}
                 </span>
@@ -319,7 +319,7 @@ export default function AdminDashboard() {
               className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${
                 activeTab === 'orders'
                   ? 'bg-harbor text-white'
-                  : 'bg-white/10 text-mist hover:text-white hover:bg-white/15'
+                  : 'bg-white/10 text-slate-200 hover:text-white hover:bg-white/15'
               }`}
             >
               <Truck className="w-4 h-4" />
@@ -327,7 +327,7 @@ export default function AdminDashboard() {
               {orders.length > 0 && (
                 <span
                   className={`text-xs px-2 py-0.5 rounded-full ${
-                    activeTab === 'orders' ? 'bg-white/20 text-white' : 'bg-white/20 text-mist'
+                    activeTab === 'orders' ? 'bg-white/20 text-white' : 'bg-white/20 text-slate-200'
                   }`}
                 >
                   {orders.length}
@@ -341,7 +341,7 @@ export default function AdminDashboard() {
               className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${
                 activeTab === 'inventory'
                   ? 'bg-harbor text-white'
-                  : 'bg-white/10 text-mist hover:text-white hover:bg-white/15'
+                  : 'bg-white/10 text-slate-200 hover:text-white hover:bg-white/15'
               }`}
             >
               <Package className="w-4 h-4" />
@@ -354,7 +354,7 @@ export default function AdminDashboard() {
               className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${
                 activeTab === 'alerts'
                   ? 'bg-harbor text-white'
-                  : 'bg-white/10 text-mist hover:text-white hover:bg-white/15'
+                  : 'bg-white/10 text-slate-200 hover:text-white hover:bg-white/15'
               }`}
             >
               <AlertTriangle className="w-4 h-4 text-lantern" />
@@ -1205,7 +1205,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Quarterdeck Operations Footer */}
-      <footer className="bg-[#002459] dark:bg-[#070e1b] text-mist py-8 px-4 sm:px-6 lg:px-8 mt-auto border-t border-fog/20" data-ui="admin-footer">
+      <footer className="bg-[#002459] dark:bg-[#070e1b] text-slate-300 py-8 px-4 sm:px-6 lg:px-8 mt-auto border-t border-fog/20" data-ui="admin-footer">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-semibold text-white">TrueHarbor Quarterdeck</span>
@@ -1214,9 +1214,9 @@ export default function AdminDashboard() {
             <span className="text-slate">•</span>
             <span>Atomic Stock Lock Protected</span>
           </div>
-          <div className="flex items-center gap-4 text-slate">
+          <div className="flex items-center gap-4 text-slate-400">
             <span>PostgreSQL & Stripe Verified</span>
-            <Link to="/products" className="text-mist hover:text-white transition-colors">
+            <Link to="/products" className="text-slate-300 hover:text-white transition-colors">
               Storefront Preview ↗
             </Link>
           </div>

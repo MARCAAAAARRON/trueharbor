@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="space-y-4">
             <Logo variant="white" size="md" />
-            <p className="text-base text-mist/80 max-w-xs leading-relaxed">
+            <p className="text-base text-slate-300 max-w-xs leading-relaxed">
               Coastal-grade essentials with honest stock counts, precision pricing, and reliable service.
             </p>
           </div>
@@ -17,7 +17,7 @@ export default function Footer() {
             <h4 className="font-display font-semibold text-base text-white mb-3">
               Shop Harbor
             </h4>
-            <ul className="space-y-2 text-sm text-mist/80">
+            <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <Link to="/products" className="hover:text-lantern transition-colors">
                   All Products
@@ -45,7 +45,7 @@ export default function Footer() {
             <h4 className="font-display font-semibold text-base text-white mb-3">
               Account & Help
             </h4>
-            <ul className="space-y-2 text-sm text-mist/80">
+            <ul className="space-y-2 text-sm text-slate-300">
               <li>
                 <Link to="/account" className="hover:text-lantern transition-colors">
                   My Orders
@@ -68,17 +68,17 @@ export default function Footer() {
             <h4 className="font-display font-semibold text-base text-white mb-3">
               Standards
             </h4>
-            <div className="space-y-2 text-sm text-mist/80">
+            <div className="space-y-2 text-sm text-slate-300">
               <p>Atomic inventory reservations with real-time stock meter.</p>
               <div className="flex items-center gap-2 pt-1">
                 <span className="w-2 h-2 rounded-full bg-sea" />
-                <span className="text-sm text-mist/90">System Operational</span>
+                <span className="text-sm text-slate-200">System Operational</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="pt-8 mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-mist/70">
+        <div className="pt-8 mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-400">
           <p>© {new Date().getFullYear()} TrueHarbor. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>PHP (₱) Integer-Cents Engine</span>
