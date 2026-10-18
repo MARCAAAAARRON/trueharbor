@@ -58,6 +58,9 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::put('/products/{id}', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'update']);
     Route::patch('/products/{id}/stock', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'updateStock']);
     Route::delete('/products/{id}', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'destroy']);
+
+    // Media upload signatures
+    Route::get('/media/signature', [\App\Http\Controllers\Api\Admin\MediaController::class, 'signature']);
 });
 
 Route::middleware('throttle:120,1')->group(function () {
