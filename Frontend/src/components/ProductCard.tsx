@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Star } from 'lucide-react';
 import type { Product } from '../types/api';
 import { formatPrice } from '../utils/format';
 import StockChip from './StockChip';
@@ -49,6 +50,16 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
           <h3 className="font-display font-medium text-base text-tide group-hover:text-harbor transition-colors line-clamp-2 leading-snug">
             {product.name}
           </h3>
+
+          {product.reviews_count && product.reviews_count > 0 ? (
+            <div className="flex items-center gap-1 mt-1.5 text-xs text-slate">
+              <Star size={13} className="text-amber-400 fill-amber-400" />
+              <span className="font-semibold text-deep">
+                {(product.average_rating ?? 0).toFixed(1)}
+              </span>
+              <span className="text-[11px] text-slate/75">({product.reviews_count})</span>
+            </div>
+          ) : null}
         </div>
 
         <div className="flex items-center justify-between pt-2">

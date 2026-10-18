@@ -11,12 +11,14 @@ import {
   ShoppingBag,
   Loader2,
   AlertCircle,
+  Star,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
 import StockChip from '../components/StockChip';
 import ProductGallery from '../components/ProductGallery';
+import ProductReviews from '../components/ProductReviews';
 import { getProduct } from '../api/catalog';
 import type { Product } from '../types/api';
 import { formatPrice } from '../utils/format';
@@ -144,8 +146,40 @@ export default function ProductDetailPage() {
     );
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org/',
+    '@type': 'Product',
+    name: product.name,
+    image: product.image_url || product.image_path,
+    description: product.description,
+    sku: `TH-${product.id}`,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'PHP',
+      price: (product.price_cents / 100).toFixed(2),
+      availability: product.in_stock
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+    },
+    ...(product.reviews_count && product.reviews_count > 0 && product.average_rating
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: product.average_rating,
+            reviewCount: product.reviews_count,
+            bestRating: '5',
+            worstRating: '1',
+          },
+        }
+      : {}),
+  };
+
   return (
     <div className="min-h-svh flex flex-col bg-mist">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
 
       {/* Breadcrumb Bar */}
@@ -190,12 +224,35 @@ export default function ProductDetailPage() {
                   {product.category.name}
                 </Link>
               )}
-              <h1 className="text-3xl sm:text-4xl font-display font-bold text-tide leading-tight mb-3">
+              <h1 className="text-3xl sm:text-4xl font-display font-bold text-tide leading-tight mb-2">
                 {product.name}
               </h1>
 
+              {/* Star Rating Summary */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star
+                      key={s}
+                      size={15}
+                      className={`${
+                        s <= Math.round(product.average_rating ?? 0)
+                          ? 'fill-amber-400 text-amber-400'
+                          : 'fill-slate-100 text-slate-200'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs font-semibold text-deep">
+                  {(product.average_rating ?? 0) > 0 ? (product.average_rating ?? 0).toFixed(1) : 'New'}
+                </span>
+                <span className="text-xs text-slate">
+                  • {product.reviews_count ?? 0} {product.reviews_count === 1 ? 'review' : 'reviews'}
+                </span>
+              </div>
+
               {/* Price & Stock Meter */}
-              <div className="flex items-center gap-4 py-3">
+              <div className="flex items-center gap-4 py-2">
                 <span className="text-2xl sm:text-3xl font-display font-bold text-tide tabular-nums">
                   {product.formatted_price ?? formatPrice(product.price_cents)}
                 </span>
@@ -318,6 +375,15 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Customer Harbor Reviews Section */}
+        <ProductReviews
+          key={product.id}
+          product={product}
+          onReviewsUpdated={(avg, count) =>
+            setProduct((prev) => (prev ? { ...prev, average_rating: avg, reviews_count: count } : null))
+          }
+        />
       </main>
 
       <Footer />

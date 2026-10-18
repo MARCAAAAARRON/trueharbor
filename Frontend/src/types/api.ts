@@ -48,6 +48,40 @@ export interface Product {
   in_stock?: boolean;
   is_active?: boolean;
   images?: ProductImage[];
+  reviews_count?: number;
+  average_rating?: number;
+}
+
+export interface ProductReview {
+  id: number;
+  product_id: number;
+  rating: number;
+  title?: string | null;
+  comment: string;
+  is_verified_purchase: boolean;
+  created_at: string;
+  formatted_date: string;
+  user: {
+    id?: number;
+    name: string;
+  };
+}
+
+export interface RatingDistributionItem {
+  stars: number;
+  count: number;
+  percentage: number;
+}
+
+export interface ProductReviewsSummary {
+  total_reviews: number;
+  average_rating: number;
+  rating_distribution: Record<number, RatingDistributionItem>;
+}
+
+export interface ProductReviewsResponse {
+  data: ProductReview[];
+  summary: ProductReviewsSummary;
 }
 
 export interface CartItem {
