@@ -24,7 +24,7 @@ TrueHarbor is a modern full-stack ecommerce application crafted to showcase rigo
 ```mermaid
 flowchart LR
     Client([Customer / Admin]) -->|HTTPS| SPA[React 19 SPA<br/>Vite + Tailwind v4]
-    SPA -->|JSON over HTTPS<br/>Bearer Token| API[Laravel 13 API<br/>PHP 8.3]
+    SPA -->|JSON over HTTPS<br/>Bearer Token| API[Laravel 13 API<br/>PHP 8.4]
     SPA -->|Card Details| Stripe[(Stripe)]
     SPA -->|Signed Direct Upload| Cloudinary[(Cloudinary CDN)]
     API -->|PostgreSQL<br/>Row-Level Locks| DB[(Supabase Postgres)]
@@ -50,7 +50,7 @@ flowchart TD
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
-- **PHP**: `^8.3` (with `pdo_pgsql`, `curl`, `mbstring`, `openssl`)
+- **PHP**: `^8.4` (with `pdo_pgsql`, `curl`, `mbstring`, `openssl`)
 - **Composer**: `^2.x`
 - **Node.js**: `^20.x` or `^22.x`
 - **PostgreSQL**: `^15.x` (or Supabase instance)

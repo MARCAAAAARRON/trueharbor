@@ -27,9 +27,9 @@ RUN composer install \
     --optimize-autoloader
 
 # ==========================================
-# Stage 3: Production Alpine Container with PHP 8.3 & Nginx
+# Stage 3: Production Alpine Container with PHP 8.4 & Nginx
 # ==========================================
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 # Install system dependencies, Nginx, Supervisor, gettext (for envsubst), and PostgreSQL drivers
 RUN apk add --no-cache \
