@@ -273,59 +273,79 @@ export default function CatalogPage() {
         {/* Department Visual Lane */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           <Link
-            to="/products?category=outdoor"
-            className="group relative h-28 rounded-lg overflow-hidden bg-white transition-transform hover:-translate-y-0.5"
+            to="/products?category=accessories"
+            className="group relative h-24 rounded-xl overflow-hidden bg-white dark:bg-white/5 border border-fog/70 dark:border-white/10 px-4 py-3 flex items-center justify-between transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs"
           >
-            <img
-              src="/assets/2016-11-13-01-kjeungskj-r-lighthouse.jpg"
-              alt="Outdoor gear"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors flex items-center justify-center p-2 text-center">
-              <span className="text-white font-display font-semibold text-base">Outdoor Gear</span>
+            <div className="flex flex-col justify-center">
+              <span className="text-tide font-display font-semibold text-sm group-hover:text-harbor transition-colors">
+                Accessories
+              </span>
+              <span className="text-[11px] text-slate mt-0.5 group-hover:text-harbor flex items-center gap-0.5">
+                Explore →
+              </span>
             </div>
+            <img
+              src="/images/categories/accessories.png"
+              alt="Accessories"
+              className="h-14 w-14 object-contain group-hover:scale-110 group-hover:-translate-y-0.5 transition-transform duration-300 drop-shadow-sm select-none shrink-0"
+            />
           </Link>
 
           <Link
             to="/products?category=apparel"
-            className="group relative h-28 rounded-lg overflow-hidden bg-white transition-transform hover:-translate-y-0.5"
+            className="group relative h-24 rounded-xl overflow-hidden bg-white dark:bg-white/5 border border-fog/70 dark:border-white/10 px-4 py-3 flex items-center justify-between transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs"
           >
-            <img
-              src="/assets/paphos-cyprus-panoramio-119.jpg"
-              alt="Coastal Apparel"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors flex items-center justify-center p-2 text-center">
-              <span className="text-white font-display font-semibold text-base">Coastal Apparel</span>
+            <div className="flex flex-col justify-center">
+              <span className="text-tide font-display font-semibold text-sm group-hover:text-harbor transition-colors">
+                Apparel
+              </span>
+              <span className="text-[11px] text-slate mt-0.5 group-hover:text-harbor flex items-center gap-0.5">
+                Explore →
+              </span>
             </div>
+            <img
+              src="/images/categories/apparel.png"
+              alt="Coastal Apparel"
+              className="h-14 w-14 object-contain group-hover:scale-110 group-hover:-translate-y-0.5 transition-transform duration-300 drop-shadow-sm select-none shrink-0"
+            />
           </Link>
 
           <Link
             to="/products?category=home"
-            className="group relative h-28 rounded-lg overflow-hidden bg-white transition-transform hover:-translate-y-0.5"
+            className="group relative h-24 rounded-xl overflow-hidden bg-white dark:bg-white/5 border border-fog/70 dark:border-white/10 px-4 py-3 flex items-center justify-between transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs"
           >
-            <img
-              src="/assets/a-coastal-view-with-a-lighthouse.jpg"
-              alt="Home Goods"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors flex items-center justify-center p-2 text-center">
-              <span className="text-white font-display font-semibold text-base">Home Goods</span>
+            <div className="flex flex-col justify-center">
+              <span className="text-tide font-display font-semibold text-sm group-hover:text-harbor transition-colors">
+                Home
+              </span>
+              <span className="text-[11px] text-slate mt-0.5 group-hover:text-harbor flex items-center gap-0.5">
+                Explore →
+              </span>
             </div>
+            <img
+              src="/images/categories/home.png"
+              alt="Home Goods"
+              className="h-14 w-14 object-contain group-hover:scale-110 group-hover:-translate-y-0.5 transition-transform duration-300 drop-shadow-sm select-none shrink-0"
+            />
           </Link>
 
           <Link
-            to="/products?category=accessories"
-            className="group relative h-28 rounded-lg overflow-hidden bg-white transition-transform hover:-translate-y-0.5"
+            to="/products?category=outdoor"
+            className="group relative h-24 rounded-xl overflow-hidden bg-white dark:bg-white/5 border border-fog/70 dark:border-white/10 px-4 py-3 flex items-center justify-between transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xs"
           >
-            <img
-              src="/assets/rocks-at-the-lighthouse-biarritz.jpg"
-              alt="Accessories"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors flex items-center justify-center p-2 text-center">
-              <span className="text-white font-display font-semibold text-base">Accessories</span>
+            <div className="flex flex-col justify-center">
+              <span className="text-tide font-display font-semibold text-sm group-hover:text-harbor transition-colors">
+                Outdoor
+              </span>
+              <span className="text-[11px] text-slate mt-0.5 group-hover:text-harbor flex items-center gap-0.5">
+                Explore →
+              </span>
             </div>
+            <img
+              src="/images/categories/outdoor.png"
+              alt="Outdoor gear"
+              className="h-14 w-14 object-contain group-hover:scale-110 group-hover:-translate-y-0.5 transition-transform duration-300 drop-shadow-sm select-none shrink-0"
+            />
           </Link>
         </div>
 

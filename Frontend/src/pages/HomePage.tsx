@@ -10,21 +10,21 @@ import { getCategories, getProducts } from '../api/catalog';
 import type { Category, Product } from '../types/api';
 
 const DEPARTMENT_ASSETS: Record<string, { image: string; alt: string }> = {
-  outdoor: {
-    image: '/assets/2016-11-13-01-kjeungskj-r-lighthouse.jpg',
-    alt: 'Coastal Norwegian lighthouse and open waters',
+  accessories: {
+    image: '/images/categories/accessories.png',
+    alt: 'TrueHarbor Coastal Accessories and Caps',
   },
   apparel: {
-    image: '/assets/paphos-cyprus-panoramio-119.jpg',
-    alt: 'Rugged Mediterranean coastline and lighthouse',
+    image: '/images/categories/apparel.png',
+    alt: 'TrueHarbor Marine Apparel and Outerwear',
   },
   home: {
-    image: '/assets/a-coastal-view-with-a-lighthouse.jpg',
-    alt: 'Albert Julius Olsson coastal painting with lighthouse',
+    image: '/images/categories/home.png',
+    alt: 'TrueHarbor Coastal Home Utility and Lamps',
   },
-  accessories: {
-    image: '/assets/rocks-at-the-lighthouse-biarritz.jpg',
-    alt: 'Joaquín Sorolla Biarritz coastal seascape',
+  outdoor: {
+    image: '/images/categories/outdoor.png',
+    alt: 'TrueHarbor Marine Outdoor and Boating Gear',
   },
 };
 
@@ -135,35 +135,35 @@ export default function HomePage() {
           {(categories.length > 0
             ? categories
             : [
-                { id: 1, name: 'Outdoor', slug: 'outdoor' },
+                { id: 4, name: 'Accessories', slug: 'accessories' },
                 { id: 2, name: 'Apparel', slug: 'apparel' },
                 { id: 3, name: 'Home', slug: 'home' },
-                { id: 4, name: 'Accessories', slug: 'accessories' },
+                { id: 1, name: 'Outdoor', slug: 'outdoor' },
               ]
           ).map((cat, idx) => {
-            const asset = DEPARTMENT_ASSETS[cat.slug] || DEPARTMENT_ASSETS.outdoor;
+            const asset = DEPARTMENT_ASSETS[cat.slug] || DEPARTMENT_ASSETS.accessories;
             return (
               <Link
                 key={cat.id}
                 to={`/products?category=${cat.slug}`}
-                className={`group flex flex-col bg-white rounded-lg overflow-hidden transition-transform hover:-translate-y-1 duration-200 animate-enter-${(idx % 4) + 1}`}
+                className={`group flex flex-col bg-white rounded-xl border border-fog/70 dark:border-white/10 overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-1 animate-enter-${(idx % 4) + 1}`}
               >
-                <div className="aspect-[4/3] w-full overflow-hidden bg-mist relative">
+                <div className="aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-mist/70 to-mist/30 dark:from-white/5 dark:to-transparent relative flex items-center justify-center p-6">
                   <img
                     src={asset.image}
                     alt={asset.alt}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full max-h-36 object-contain group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300 drop-shadow-md select-none"
                     loading="lazy"
                   />
                 </div>
-                <div className="p-5 flex items-center justify-between">
+                <div className="p-5 flex items-center justify-between border-t border-fog/40 dark:border-white/5">
                   <div>
                     <h3 className="font-display font-semibold text-lg text-tide group-hover:text-harbor transition-colors">
                       {cat.name}
                     </h3>
                     <span className="text-sm text-slate mt-0.5 block">Explore collection</span>
                   </div>
-                  <span className="text-sm font-semibold text-harbor">→</span>
+                  <span className="text-sm font-semibold text-harbor group-hover:translate-x-1 transition-transform">→</span>
                 </div>
               </Link>
             );
