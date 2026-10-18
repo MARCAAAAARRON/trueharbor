@@ -254,7 +254,7 @@ export default function AdminDashboard() {
       <AdminNavbar />
 
       {/* Quarterdeck Editorial Command Banner */}
-      <div className="relative bg-tide text-white overflow-hidden py-10 px-4 sm:px-6 lg:px-8">
+      <div className="relative bg-[#002459] dark:bg-[#070e1b] text-white overflow-hidden py-10 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <img
             src="/assets/2016-11-13-01-kjeungskj-r-lighthouse.jpg"
@@ -385,7 +385,7 @@ export default function AdminDashboard() {
                     onClick={() => setStatusFilter(st)}
                     className={`px-3 py-1.5 rounded-md font-semibold capitalize transition-colors ${
                       statusFilter === st
-                        ? 'bg-tide text-white'
+                        ? 'bg-harbor text-white shadow-xs'
                         : 'bg-mist text-slate hover:text-tide'
                     }`}
                   >
@@ -1205,7 +1205,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Quarterdeck Operations Footer */}
-      <footer className="bg-tide text-mist py-8 px-4 sm:px-6 lg:px-8 mt-auto" data-ui="admin-footer">
+      <footer className="bg-[#002459] dark:bg-[#070e1b] text-mist py-8 px-4 sm:px-6 lg:px-8 mt-auto border-t border-fog/20" data-ui="admin-footer">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-semibold text-white">TrueHarbor Quarterdeck</span>

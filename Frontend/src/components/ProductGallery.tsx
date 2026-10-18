@@ -101,7 +101,7 @@ export default function ProductGallery({ product, className = '' }: ProductGalle
 
         {/* Counter Badge */}
         {images.length > 1 && (
-          <div className="absolute top-3 right-3 bg-tide/75 backdrop-blur-xs text-white text-[11px] font-semibold px-2.5 py-1 rounded-full tabular-nums pointer-events-none">
+          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-xs text-white text-[11px] font-semibold px-2.5 py-1 rounded-full tabular-nums pointer-events-none">
             {activeIndex + 1} / {images.length}
           </div>
         )}

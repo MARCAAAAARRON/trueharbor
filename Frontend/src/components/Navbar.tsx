@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, ShoppingBag, Menu, X, User as UserIcon, ShieldCheck, LogOut } from 'lucide-react';
 import Logo from './Logo';
 import Button from './Button';
+import ThemeToggle from './ThemeToggle';
 import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../hooks/useCart';
 import { useToast } from '../context/ToastContext';
@@ -87,7 +88,9 @@ export default function Navbar({ cartItemCount: propCartItemCount }: NavbarProps
           </div>
 
           {/* Right Action Icons & Auth */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <ThemeToggle size="md" />
+
             {/* Cart Button */}
             <button
               type="button"
@@ -218,7 +221,12 @@ export default function Navbar({ cartItemCount: propCartItemCount }: NavbarProps
               </Link>
             </nav>
 
-            <div className="pt-4 flex flex-col gap-2">
+            <div className="pt-3 border-t border-fog flex items-center justify-between px-3 py-1.5 mb-1 bg-mist/60 dark:bg-white/5 rounded-lg border border-fog/60">
+              <span className="text-xs font-semibold text-slate dark:text-slate-300">Interface Theme</span>
+              <ThemeToggle size="sm" />
+            </div>
+
+            <div className="pt-2 flex flex-col gap-2">
               {loading ? (
                 <div className="h-9 bg-mist rounded-md" />
               ) : user ? (

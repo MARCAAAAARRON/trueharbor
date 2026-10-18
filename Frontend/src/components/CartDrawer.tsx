@@ -60,7 +60,7 @@ export default function CartDrawer() {
     <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true" aria-label="Shopping Cart">
       {/* Dimmed backdrop */}
       <div
-        className="fixed inset-0 bg-tide/50 transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-2xs transition-opacity"
         onClick={closeCart}
         aria-hidden="true"
       />

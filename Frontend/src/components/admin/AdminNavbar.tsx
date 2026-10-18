@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShieldCheck, ArrowRight, LogOut, Menu, X, User as UserIcon } from 'lucide-react';
 import Logo from '../Logo';
 import Button from '../Button';
+import ThemeToggle from '../ThemeToggle';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../context/ToastContext';
 import { useConfirm } from '../../context/ConfirmContext';
@@ -44,6 +45,8 @@ export default function AdminNavbar() {
 
           {/* Right Action Icons & Admin Session */}
           <div className="flex items-center gap-3">
+            <ThemeToggle size="md" />
+
             {/* Live Storefront Link */}
             <Link
               to="/products"
@@ -95,6 +98,11 @@ export default function AdminNavbar() {
             <div className="flex items-center gap-2 px-1">
               <ShieldCheck className="w-4 h-4 text-harbor" />
               <span className="text-xs font-semibold text-tide">Harbormaster Back Office</span>
+            </div>
+
+            <div className="flex items-center justify-between px-3 py-1.5 bg-white dark:bg-white/5 rounded-md border border-fog/60">
+              <span className="text-xs font-semibold text-slate dark:text-slate-300">Interface Theme</span>
+              <ThemeToggle size="sm" />
             </div>
 
             <div className="pt-2 flex flex-col gap-2">

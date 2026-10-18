@@ -35,7 +35,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="pointer-events-auto flex items-start gap-3 p-4 rounded-xl bg-tide text-white transition-opacity transition-transform duration-200 transform translate-y-0"
+            className="pointer-events-auto flex items-start gap-3 p-4 rounded-xl bg-[#002459] dark:bg-[#131d31] text-white border border-white/10 dark:border-white/15 shadow-xl transition-opacity transition-transform duration-200 transform translate-y-0"
           >
             {toast.type === 'success' && <CheckCircle2 className="w-5 h-5 text-sea shrink-0 mt-0.5" />}
             {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-buoy shrink-0 mt-0.5" />}

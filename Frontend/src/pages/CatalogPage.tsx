@@ -191,7 +191,7 @@ export default function CatalogPage() {
       <Navbar />
 
       {/* Catalog Editorial Header */}
-      <div className="relative bg-tide text-white overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
+      <div className="relative bg-[#002459] dark:bg-[#070e1b] text-white overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <img
             src="/assets/2016-11-13-01-kjeungskj-r-lighthouse.jpg"
@@ -281,7 +281,7 @@ export default function CatalogPage() {
               alt="Outdoor gear"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="absolute inset-0 bg-tide/50 group-hover:bg-tide/40 transition-colors flex items-center justify-center p-2 text-center">
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors flex items-center justify-center p-2 text-center">
               <span className="text-white font-display font-semibold text-base">Outdoor Gear</span>
             </div>
           </Link>
@@ -295,7 +295,7 @@ export default function CatalogPage() {
               alt="Coastal Apparel"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="absolute inset-0 bg-tide/50 group-hover:bg-tide/40 transition-colors flex items-center justify-center p-2 text-center">
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors flex items-center justify-center p-2 text-center">
               <span className="text-white font-display font-semibold text-base">Coastal Apparel</span>
             </div>
           </Link>
@@ -309,7 +309,7 @@ export default function CatalogPage() {
               alt="Home Goods"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="absolute inset-0 bg-tide/50 group-hover:bg-tide/40 transition-colors flex items-center justify-center p-2 text-center">
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors flex items-center justify-center p-2 text-center">
               <span className="text-white font-display font-semibold text-base">Home Goods</span>
             </div>
           </Link>
@@ -323,7 +323,7 @@ export default function CatalogPage() {
               alt="Accessories"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="absolute inset-0 bg-tide/50 group-hover:bg-tide/40 transition-colors flex items-center justify-center p-2 text-center">
+            <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors flex items-center justify-center p-2 text-center">
               <span className="text-white font-display font-semibold text-base">Accessories</span>
             </div>
           </Link>
@@ -400,7 +400,7 @@ export default function CatalogPage() {
 
           {/* Mobile Filter Modal */}
           {mobileFilterOpen && (
-            <div className="fixed inset-0 z-40 bg-tide/50 flex justify-end lg:hidden">
+            <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-2xs flex justify-end lg:hidden">
               <div className="w-full max-w-xs bg-white h-full p-6 overflow-y-auto space-y-6">
                 <div className="flex items-center justify-between pb-3">
                   <h3 className="font-display font-bold text-lg text-tide">Filters</h3>

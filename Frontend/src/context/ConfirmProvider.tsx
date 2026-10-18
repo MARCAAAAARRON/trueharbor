@@ -43,7 +43,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
       {/* Branded Coastal Confirmation Modal */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tide/75 animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
           role="dialog"
           aria-modal="true"
         >

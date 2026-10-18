@@ -60,47 +60,53 @@ export default function HomePage() {
     <div className="min-h-svh flex flex-col bg-mist overflow-x-clip">
       <Navbar />
 
-      {/* Hero Banner (Art Directed Split-Stage) */}
-      <section className="bg-harbor text-white px-6 py-16 sm:py-24 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10">
+      {/* Hero Banner with authentic Lighthouse Photography & Coastal Atmospheric Overlay */}
+      <section className="relative text-white px-6 py-16 sm:py-24 lg:py-28 overflow-hidden bg-harbor dark:bg-[#070e1b]">
+        {/* Photographic Background */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/images/lighthouse.jpeg"
+            alt="TrueHarbor Coastal Lighthouse"
+            className="w-full h-full object-cover object-[75%_center] sm:object-right select-none opacity-90"
+          />
+          {/* Gradient Scrim: Deep harbor blue fading from solid/high-opacity on left to translucent on right */}
+          <div className="absolute inset-0 bg-gradient-to-r from-harbor/95 via-harbor/85 to-harbor/30 sm:to-transparent dark:from-[#070e1b]/95 dark:via-[#070e1b]/85 dark:to-[#070e1b]/35" />
+          {/* Subtle bottom vignette to blend into next section */}
+          <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-harbor/40 dark:from-[#070e1b]/60 to-transparent" />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
           <div className="w-full lg:max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-sm font-medium text-white mb-6 animate-enter-1">
-              <span className="w-2 h-2 rounded-full bg-lantern" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/15 dark:bg-white/10 backdrop-blur-md rounded-full text-xs sm:text-sm font-semibold text-white mb-6 animate-enter-1 shadow-xs border border-white/20">
+              <span className="w-2 h-2 rounded-full bg-lantern animate-pulse" />
               <span>Coastal-Grade Essentials • Real-Time Inventory</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white mb-6 leading-tight tracking-tight max-w-lg animate-enter-2">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white mb-6 leading-tight tracking-tight max-w-lg animate-enter-2 drop-shadow-sm">
               Everyday things,<br className="hidden sm:inline" /> found easily.
             </h1>
 
-            <p className="text-mist/95 text-base sm:text-lg mb-8 max-w-lg leading-relaxed animate-enter-3">
+            <p className="text-mist/95 dark:text-slate-200 text-base sm:text-lg mb-8 max-w-lg leading-relaxed animate-enter-3 drop-shadow-2xs">
               Curated essentials with honest stock counts, precision pricing, and instant checkout dispatch.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 animate-enter-4">
               <Link to="/products">
-                <Button variant="on-blue" className="h-12 px-6 text-base font-medium">
+                <Button variant="on-blue" className="h-12 px-6 text-base font-semibold shadow-md">
                   Explore Catalog
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
               <Link to="/products?category=outdoor">
-                <span className="text-base font-medium text-white/90 hover:text-white underline underline-offset-4 decoration-lantern">
+                <span className="text-base font-medium text-white/95 hover:text-white underline underline-offset-4 decoration-lantern decoration-2">
                   View Outdoor Gear →
                 </span>
               </Link>
             </div>
           </div>
 
-          <div className="relative flex justify-center items-center animate-enter-2">
-            <div className="w-64 sm:w-80 h-auto relative">
-              <img
-                src="/logo-mark-white.png"
-                alt="TrueHarbor Lighthouse"
-                className="w-full h-auto select-none"
-              />
-            </div>
-          </div>
+          {/* Right Stage: Visual breathing room letting the photographic lighthouse shine */}
+          <div className="hidden lg:block w-72 h-48 pointer-events-none" aria-hidden="true" />
         </div>
       </section>
 

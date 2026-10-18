@@ -238,7 +238,7 @@ export default function ProductDetailPage() {
                       className={`${
                         s <= Math.round(product.average_rating ?? 0)
                           ? 'fill-amber-400 text-amber-400'
-                          : 'fill-slate-100 text-slate-200'
+                          : 'fill-slate-100 text-slate-200 dark:fill-slate-800 dark:text-slate-700'
                       }`}
                     />
                   ))}

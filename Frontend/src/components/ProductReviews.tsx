@@ -307,7 +307,7 @@ export default function ProductReviews({ product, onReviewsUpdated }: ProductRev
                         )}
                       </div>
 
-                      <p className="mt-3 text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                      <p className="mt-3 text-sm text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line">
                         {rev.comment}
                       </p>
                     </article>
