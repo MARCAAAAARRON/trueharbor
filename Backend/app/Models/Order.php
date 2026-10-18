@@ -22,8 +22,12 @@ class Order extends Model
         'payment_intent_id',
         'payment_method',
         'payment_details',
+        'carrier',
+        'tracking_number',
         'expires_at',
         'paid_at',
+        'shipped_at',
+        'delivered_at',
     ];
 
     protected function casts(): array
@@ -37,7 +41,39 @@ class Order extends Model
             'payment_details' => 'array',
             'expires_at' => 'datetime',
             'paid_at' => 'datetime',
+            'shipped_at' => 'datetime',
+            'delivered_at' => 'datetime',
         ];
+    }
+
+    public function getTrackingUrlAttribute(): ?string
+    {
+        if (!$this->tracking_number) {
+            return null;
+        }
+
+        return match (strtolower($this->carrier ?? '')) {
+            'lbc' => "https://www.lbcexpress.com/track/?tracking_no={$this->tracking_number}",
+            'jnt', 'j&t' => "https://www.jtexpress.ph/trajectoryQuery?bills={$this->tracking_number}",
+            '2go' => "https://supplychain.2go.com.ph/CustomerSupport/etrace/index.asp?wb={$this->tracking_number}",
+            'grab' => "https://express.grab.com/track/{$this->tracking_number}",
+            default => null,
+        };
+    }
+
+    public function getCarrierLabelAttribute(): ?string
+    {
+        if (!$this->carrier) {
+            return null;
+        }
+
+        return match (strtolower($this->carrier)) {
+            'lbc' => 'LBC Express',
+            'jnt', 'j&t' => 'J&T Express',
+            '2go' => '2GO Sea Solutions',
+            'grab' => 'Grab Express',
+            default => strtoupper($this->carrier),
+        };
     }
 
     public function user(): BelongsTo

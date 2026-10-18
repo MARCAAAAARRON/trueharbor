@@ -44,9 +44,16 @@ export const adminApi = {
     return res.data.data;
   },
 
-  updateOrderStatus: async (id: number, status: OrderStatus): Promise<Order> => {
+  updateOrderStatus: async (
+    id: number,
+    status: OrderStatus,
+    carrier?: string,
+    trackingNumber?: string
+  ): Promise<Order> => {
     const res = await client.patch<{ data: Order }>(`/admin/orders/${id}/status`, {
       status,
+      carrier,
+      tracking_number: trackingNumber,
     });
     return res.data.data;
   },

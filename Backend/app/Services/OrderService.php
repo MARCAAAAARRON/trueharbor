@@ -208,9 +208,14 @@ class OrderService
     /**
      * Transition order status by admin with state machine verification
      */
-    public function updateOrderStatus(Order $order, OrderStatus $nextStatus): Order
+    public function updateOrderStatus(
+        Order $order,
+        OrderStatus $nextStatus,
+        ?string $carrier = null,
+        ?string $trackingNumber = null
+    ): Order
     {
-        return DB::transaction(function () use ($order, $nextStatus) {
+        return DB::transaction(function () use ($order, $nextStatus, $carrier, $trackingNumber) {
             $lockedOrder = Order::where('id', $order->id)->lockForUpdate()->firstOrFail();
 
             if (!$lockedOrder->status->canTransitionTo($nextStatus)) {
@@ -232,10 +237,39 @@ class OrderService
             if ($nextStatus === OrderStatus::Paid && !$lockedOrder->paid_at) {
                 $updateData['paid_at'] = now();
             }
+            if ($nextStatus === OrderStatus::Shipped) {
+                $updateData['shipped_at'] = now();
+                if ($carrier) {
+                    $updateData['carrier'] = $carrier;
+                }
+                if ($trackingNumber) {
+                    $updateData['tracking_number'] = $trackingNumber;
+                }
+            }
+            if ($nextStatus === OrderStatus::Delivered) {
+                $updateData['delivered_at'] = now();
+            }
 
             $lockedOrder->update($updateData);
 
+            if ($nextStatus === OrderStatus::Shipped) {
+                $this->dispatchShippingNotification($lockedOrder);
+            }
+
             return $lockedOrder->fresh(['items', 'user']);
         });
+    }
+
+    protected function dispatchShippingNotification(Order $order): void
+    {
+        try {
+            $order->loadMissing(['user', 'items']);
+            if ($order->user && $order->user->email) {
+                \Illuminate\Support\Facades\Mail::to($order->user->email)
+                    ->send(new \App\Mail\OrderShippedMail($order));
+            }
+        } catch (\Throwable $e) {
+            Log::warning("Could not send shipping notification for Order #{$order->id}: " . $e->getMessage());
+        }
     }
 }

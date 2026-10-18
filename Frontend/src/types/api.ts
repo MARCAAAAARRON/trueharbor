@@ -146,9 +146,15 @@ export interface Order {
   client_secret?: string | null;
   payment_intent_client_secret?: string | null;
   items: OrderItem[];
+  carrier?: string | null;
+  carrier_label?: string | null;
+  tracking_number?: string | null;
+  tracking_url?: string | null;
   created_at: string;
   expires_at: string;
   paid_at: string | null;
+  shipped_at?: string | null;
+  delivered_at?: string | null;
 }
 
 export interface PaginatedResponse<T> {

@@ -11,6 +11,7 @@ import {
   CreditCard,
   Smartphone,
   Wallet,
+  ExternalLink,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -146,6 +147,61 @@ export default function OrderConfirmationPage() {
           </div>
         </div>
 
+        {/* Live Cargo Logistics & Tracking Card */}
+        {(order.tracking_number || order.status === 'shipped' || order.status === 'delivered') && (
+          <div className="bg-gradient-to-r from-foam/80 via-white to-foam/60 border border-harbor/25 rounded-xl p-5 sm:p-6 mb-8 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3.5">
+                <div className="w-11 h-11 rounded-lg bg-harbor text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Truck className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs uppercase tracking-wider font-bold text-harbor">
+                      Cargo En Route
+                    </span>
+                    {order.status === 'delivered' ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                        Delivered
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
+                        In Transit
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="text-base font-display font-bold text-tide mt-0.5">
+                    Dispatched via {order.carrier_label || order.carrier?.toUpperCase() || 'Express Courier'}
+                  </h2>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate mt-1.5">
+                    <span>Tracking / Waybill:</span>
+                    <span className="font-mono font-bold text-tide bg-white px-2.5 py-0.5 rounded border border-foam/80 shadow-2xs">
+                      {order.tracking_number || 'Waybill Generated'}
+                    </span>
+                    {order.shipped_at && (
+                      <span className="text-slate">
+                        • Departed {formatDate(order.shipped_at)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {order.tracking_url && (
+                <a
+                  href={order.tracking_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-harbor hover:bg-navy text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
+                >
+                  <span>Track on {order.carrier_label || 'Carrier Portal'}</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Order Details Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Destination */}
@@ -179,6 +235,18 @@ export default function OrderConfirmationPage() {
                 <div>
                   <span className="block font-medium text-tide">Payment Confirmed:</span>
                   <span>{formatDate(order.paid_at)}</span>
+                </div>
+              )}
+              {order.shipped_at && (
+                <div>
+                  <span className="block font-medium text-tide">Dispatched / En Route:</span>
+                  <span>{formatDate(order.shipped_at)}</span>
+                </div>
+              )}
+              {order.delivered_at && (
+                <div>
+                  <span className="block font-medium text-tide">Delivered:</span>
+                  <span>{formatDate(order.delivered_at)}</span>
                 </div>
               )}
             </div>

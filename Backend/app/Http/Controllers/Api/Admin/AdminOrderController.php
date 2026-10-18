@@ -62,12 +62,19 @@ class AdminOrderController extends Controller
     {
         $validated = $request->validate([
             'status' => ['required', 'string', Rule::enum(OrderStatus::class)],
+            'carrier' => ['nullable', 'string', 'max:50'],
+            'tracking_number' => ['nullable', 'string', 'max:100'],
         ]);
 
         $order = Order::findOrFail($id);
         $nextStatus = OrderStatus::from($validated['status']);
 
-        $updatedOrder = $orderService->updateOrderStatus($order, $nextStatus);
+        $updatedOrder = $orderService->updateOrderStatus(
+            $order,
+            $nextStatus,
+            $validated['carrier'] ?? null,
+            $validated['tracking_number'] ?? null
+        );
 
         return new OrderResource($updatedOrder);
     }

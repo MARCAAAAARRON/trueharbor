@@ -26,9 +26,15 @@ class OrderResource extends JsonResource
             'client_secret' => $this->when(isset($this->client_secret), $this->client_secret),
             'payment_intent_client_secret' => $this->when(isset($this->client_secret), $this->client_secret),
             'items' => OrderItemResource::collection($this->whenLoaded('items')),
+            'carrier' => $this->carrier,
+            'carrier_label' => $this->carrier_label,
+            'tracking_number' => $this->tracking_number,
+            'tracking_url' => $this->tracking_url,
             'created_at' => $this->created_at?->toISOString(),
             'expires_at' => $this->expires_at?->toISOString(),
             'paid_at' => $this->paid_at?->toISOString(),
+            'shipped_at' => $this->shipped_at?->toISOString(),
+            'delivered_at' => $this->delivered_at?->toISOString(),
         ];
     }
 }

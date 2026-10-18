@@ -69,6 +69,42 @@ export default function AdminDashboard() {
   const [editSubmitting, setEditSubmitting] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
+  // Carrier Dispatch Modal State
+  const [shippingOrder, setShippingOrder] = useState<Order | null>(null);
+  const [carrierSelect, setCarrierSelect] = useState<'lbc' | 'jnt' | '2go' | 'grab'>('lbc');
+  const [trackingInput, setTrackingInput] = useState('');
+  const [dispatchSubmitting, setDispatchSubmitting] = useState(false);
+  const [dispatchError, setDispatchError] = useState<string | null>(null);
+
+  const handleDispatchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!shippingOrder) return;
+    if (!trackingInput.trim()) {
+      setDispatchError('Tracking or Waybill number is required to dispatch cargo.');
+      return;
+    }
+
+    try {
+      setDispatchSubmitting(true);
+      setDispatchError(null);
+      const updated = await adminApi.updateOrderStatus(
+        shippingOrder.id,
+        'shipped',
+        carrierSelect,
+        trackingInput.trim()
+      );
+      setOrders((prev) => prev.map((o) => (o.id === shippingOrder.id ? updated : o)));
+      toast.success(
+        `Order #TH-${String(shippingOrder.id).padStart(6, '0')} dispatched via ${carrierSelect.toUpperCase()}! Notification sent.`
+      );
+      setShippingOrder(null);
+    } catch (err: unknown) {
+      setDispatchError(err instanceof Error ? err.message : 'Failed to dispatch order.');
+    } finally {
+      setDispatchSubmitting(false);
+    }
+  };
+
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
@@ -447,6 +483,34 @@ export default function AdminDashboard() {
                       </div>
                     </div>
 
+                    {/* Logistics Tracking Info if Assigned */}
+                    {order.tracking_number && (
+                      <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-foam/40 border border-foam/80 rounded-lg text-xs">
+                        <div className="flex items-center gap-2">
+                          <Truck className="w-4 h-4 text-harbor shrink-0" />
+                          <span className="font-semibold text-tide">Carrier:</span>
+                          <span className="font-medium text-harbor">
+                            {order.carrier_label || order.carrier?.toUpperCase()}
+                          </span>
+                          <span className="text-slate">•</span>
+                          <span className="font-semibold text-tide">Waybill:</span>
+                          <span className="font-mono bg-white px-2 py-0.5 rounded border border-foam text-tide font-medium">
+                            {order.tracking_number}
+                          </span>
+                        </div>
+                        {order.tracking_url && (
+                          <a
+                            href={order.tracking_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-semibold text-harbor hover:text-navy underline flex items-center gap-1"
+                          >
+                            Track Cargo ↗
+                          </a>
+                        )}
+                      </div>
+                    )}
+
                     {/* Fulfillment Action Buttons */}
                     <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
                       <Link
@@ -485,11 +549,16 @@ export default function AdminDashboard() {
                             <Button
                               variant="primary"
                               disabled={updatingOrderId === order.id}
-                              onClick={() => handleStatusTransition(order.id, 'shipped')}
+                              onClick={() => {
+                                setShippingOrder(order);
+                                setCarrierSelect((order.carrier as 'lbc' | 'jnt' | '2go' | 'grab') || 'lbc');
+                                setTrackingInput(order.tracking_number || '');
+                                setDispatchError(null);
+                              }}
                               className="h-8 px-3 text-xs"
                             >
                               <Truck className="w-3.5 h-3.5" />
-                              <span>Mark as Shipped</span>
+                              <span>Dispatch & Ship Cargo</span>
                             </Button>
                             <Button
                               variant="destructive"
@@ -504,15 +573,31 @@ export default function AdminDashboard() {
                         )}
 
                         {order.status === 'shipped' && (
-                          <Button
-                            variant="primary"
-                            disabled={updatingOrderId === order.id}
-                            onClick={() => handleStatusTransition(order.id, 'delivered')}
-                            className="h-8 px-3 text-xs"
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>Mark as Delivered</span>
-                          </Button>
+                          <>
+                            <Button
+                              variant="secondary"
+                              disabled={updatingOrderId === order.id}
+                              onClick={() => {
+                                setShippingOrder(order);
+                                setCarrierSelect((order.carrier as 'lbc' | 'jnt' | '2go' | 'grab') || 'lbc');
+                                setTrackingInput(order.tracking_number || '');
+                                setDispatchError(null);
+                              }}
+                              className="h-8 px-3 text-xs"
+                            >
+                              <Truck className="w-3.5 h-3.5" />
+                              <span>Update Tracking</span>
+                            </Button>
+                            <Button
+                              variant="primary"
+                              disabled={updatingOrderId === order.id}
+                              onClick={() => handleStatusTransition(order.id, 'delivered')}
+                              className="h-8 px-3 text-xs"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Mark as Delivered</span>
+                            </Button>
+                          </>
                         )}
                       </div>
                     </div>
@@ -1009,6 +1094,109 @@ export default function AdminDashboard() {
                   className="h-9 px-5 text-xs font-semibold"
                 >
                   {editSubmitting ? 'Saving Changes...' : 'Save Provision Changes'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Dispatch Cargo & Logistics Modal */}
+      {shippingOrder && (
+        <div className="fixed inset-0 z-50 bg-tide/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-scale-in">
+            <div className="flex items-center justify-between pb-3 border-b border-foam/80">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-harbor/10 text-harbor flex items-center justify-center">
+                  <Truck className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-sm text-tide">
+                    Dispatch Order #TH-{String(shippingOrder.id).padStart(6, '0')}
+                  </h3>
+                  <p className="text-[11px] text-slate">Assign Philippine courier & waybill number</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShippingOrder(null)}
+                className="text-slate hover:text-tide p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {dispatchError && (
+              <div className="mt-3 p-3 bg-red-50 border border-red-200 text-buoy text-xs rounded-lg flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <span>{dispatchError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleDispatchSubmit} className="mt-4 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-tide mb-1">
+                  Logistics Carrier / Courier Partner
+                </label>
+                <select
+                  value={carrierSelect}
+                  onChange={(e) =>
+                    setCarrierSelect(e.target.value as 'lbc' | 'jnt' | '2go' | 'grab')
+                  }
+                  className="w-full h-10 px-3 text-xs bg-mist rounded-md focus:outline-none focus:ring-1 focus:ring-harbor text-tide"
+                >
+                  <option value="lbc">LBC Express (Air & Sea Cargo)</option>
+                  <option value="jnt">J&T Express (Next-Day Nationwide)</option>
+                  <option value="2go">2GO Sea Solutions (Inter-Island Freight)</option>
+                  <option value="grab">Grab Express (Metro Same-Day Courier)</option>
+                </select>
+                <p className="text-[11px] text-slate mt-1">
+                  Recipient:{' '}
+                  <span className="font-medium text-tide">
+                    {shippingOrder.shipping_address.name}
+                  </span>{' '}
+                  ({shippingOrder.shipping_address.city}, {shippingOrder.shipping_address.province})
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-tide mb-1">
+                  Waybill / Tracking Number <span className="text-buoy">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g., LBC-88294719, 7829401829"
+                  value={trackingInput}
+                  onChange={(e) => setTrackingInput(e.target.value)}
+                  className="w-full h-10 px-3 text-xs bg-mist rounded-md font-mono focus:outline-none focus:ring-1 focus:ring-harbor text-tide"
+                />
+                <p className="text-[11px] text-slate mt-1">
+                  Customers will receive live tracking links in their automated email receipt and order dashboard.
+                </p>
+              </div>
+
+              <div className="p-3 bg-foam/40 rounded-lg text-[11px] text-slate leading-relaxed border border-foam">
+                <strong>Dispatch Notification:</strong> Submitting will transition this order to{' '}
+                <span className="font-semibold text-harbor">SHIPPED</span> and trigger an automated branded shipment notification email.
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setShippingOrder(null)}
+                  className="h-9 px-4 text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={dispatchSubmitting}
+                  className="h-9 px-5 text-xs font-semibold"
+                >
+                  {dispatchSubmitting ? 'Dispatching Cargo...' : 'Confirm Dispatch & Send Email'}
                 </Button>
               </div>
             </form>
