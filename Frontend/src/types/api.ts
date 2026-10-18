@@ -138,6 +138,11 @@ export interface Order {
   formatted_total: string;
   shipping_address: ShippingAddress;
   payment_intent_id: string | null;
+  payment_method?: 'card' | 'gcash' | 'maya';
+  payment_details?: {
+    account_number?: string;
+    account_name?: string;
+  } | null;
   client_secret?: string | null;
   payment_intent_client_secret?: string | null;
   items: OrderItem[];

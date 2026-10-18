@@ -4,12 +4,15 @@ import {
   ShieldCheck,
   Truck,
   CreditCard,
+  Smartphone,
+  Wallet,
   Lock,
   ArrowLeft,
   CheckCircle2,
   AlertCircle,
   Loader2,
   ShoppingBag,
+  X,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -20,7 +23,7 @@ import { useToast } from '../context/ToastContext';
 import { checkoutApi } from '../api/checkout';
 import { formatPrice } from '../utils/format';
 import { extractValidationErrors, getErrorMessage } from '../utils/errors';
-import type { ShippingAddress } from '../types/api';
+import type { ShippingAddress, Order } from '../types/api';
 
 const FREE_SHIPPING_THRESHOLD_CENTS = 250000; // ₱2,500.00
 const FLAT_SHIPPING_CENTS = 15000; // ₱150.00
@@ -46,6 +49,14 @@ export default function CheckoutPage() {
     phone: '',
   });
 
+  // Payment method selection & wallet modal state
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'gcash' | 'maya'>('card');
+  const [walletPhone, setWalletPhone] = useState('0917 123 4567');
+  const [walletOtp, setWalletOtp] = useState('123456');
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [pendingOrder, setPendingOrder] = useState<Order | null>(null);
+  const [walletVerifying, setWalletVerifying] = useState(false);
+
   // Card mock state for realistic test mode
   const [cardHolder, setCardHolder] = useState(user?.name || '');
   const [cardNumber] = useState('4242 •••• •••• 4242');
@@ -70,6 +81,24 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleConfirmWalletPayment = async () => {
+    if (!pendingOrder || !pendingOrder.payment_intent_id) return;
+
+    try {
+      setWalletVerifying(true);
+      await checkoutApi.confirmTestPayment(pendingOrder.payment_intent_id);
+      toast.success(
+        `${paymentMethod === 'gcash' ? 'GCash' : 'Maya'} payment authorized & verified!`
+      );
+      setShowWalletModal(false);
+      navigate(`/orders/${pendingOrder.id}`);
+    } catch (err: unknown) {
+      const msg = getErrorMessage(err, 'Failed to complete e-wallet payment authorization.');
+      toast.error(msg);
+      setWalletVerifying(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
@@ -90,25 +119,42 @@ export default function CheckoutPage() {
       setPaymentStepText('Securing stock and creating order...');
 
       // 1. Create order with row-locks in database
-      const order = await checkoutApi.createOrder(formData);
+      const order = await checkoutApi.createOrder({
+        shipping_address: formData,
+        payment_method: paymentMethod,
+        payment_details:
+          paymentMethod !== 'card'
+            ? {
+                account_number: walletPhone || formData.phone,
+                account_name: formData.name,
+              }
+            : undefined,
+      });
 
       // 2. Refresh cart state (it's now cleared in database)
       await refreshCart();
 
-      // 3. Process payment
-      setPaymentStepText('Processing payment with Stripe...');
+      if (paymentMethod === 'card') {
+        // 3. Process card payment
+        setPaymentStepText('Processing payment with Stripe...');
 
-      const paymentIntentId = order.payment_intent_id;
-      if (paymentIntentId) {
-        // Complete test mode payment simulation
-        await checkoutApi.confirmTestPayment(paymentIntentId);
+        const paymentIntentId = order.payment_intent_id;
+        if (paymentIntentId) {
+          await checkoutApi.confirmTestPayment(paymentIntentId);
+        }
+
+        setPaymentStepText('Payment verified! Redirecting to receipt...');
+        toast.success(`Order #${order.id} placed and payment verified!`);
+        setTimeout(() => {
+          navigate(`/orders/${order.id}`);
+        }, 600);
+      } else {
+        // GCash or Maya: Open interactive authorization modal
+        setPendingOrder(order);
+        setShowWalletModal(true);
+        setIsSubmitting(false);
+        setPaymentStepText('');
       }
-
-      setPaymentStepText('Payment verified! Redirecting to receipt...');
-      toast.success(`Order #${order.id} placed and payment verified!`);
-      setTimeout(() => {
-        navigate(`/orders/${order.id}`);
-      }, 600);
     } catch (err: unknown) {
       const fieldValidationErrors = extractValidationErrors(err);
       if (fieldValidationErrors) {
@@ -358,55 +404,200 @@ export default function CheckoutPage() {
                   </div>
                   <span className="text-[11px] font-semibold bg-sand/40 text-harbor px-2.5 py-0.5 rounded-full flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5 text-harbor" />
-                    Stripe Test Mode
+                    Regional Philippine Rails
                   </span>
                 </div>
 
-                {/* Card input mockup */}
-                <div className="p-4 bg-mist/60 rounded-lg space-y-3">
-                  <div className="flex items-center justify-between text-xs text-slate">
-                    <span className="font-medium text-tide">Credit or Debit Card</span>
-                    <span className="tabular-nums tracking-widest text-[11px]">4242 Test Visa</span>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-medium text-slate mb-1">Card Number</label>
-                    <div className="w-full h-10 px-3 bg-white rounded-md flex items-center justify-between tabular-nums tracking-widest text-sm text-tide">
-                      <span>{cardNumber}</span>
-                      <CreditCard className="w-4 h-4 text-slate" />
+                {/* Method Selector Tabs */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Card Option */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('card')}
+                    className={`p-3.5 rounded-xl border text-left transition flex flex-col justify-between ${
+                      paymentMethod === 'card'
+                        ? 'border-harbor bg-harbor/5 ring-1 ring-harbor'
+                        : 'border-sand hover:border-slate/40 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <CreditCard
+                        className={`w-5 h-5 ${
+                          paymentMethod === 'card' ? 'text-harbor' : 'text-slate'
+                        }`}
+                      />
+                      <span className="text-[10px] font-semibold text-slate uppercase tracking-wider">
+                        Stripe
+                      </span>
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate mb-1">Expires</label>
-                      <div className="w-full h-10 px-3 bg-white rounded-md flex items-center tabular-nums text-sm text-tide">
-                        {cardExpiry}
-                      </div>
+                    <div className="mt-2">
+                      <span className="font-semibold text-sm text-tide block">Card</span>
+                      <span className="text-[11px] text-slate block">Visa, Mastercard</span>
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate mb-1">CVC</label>
-                      <div className="w-full h-10 px-3 bg-white rounded-md flex items-center tabular-nums tracking-widest text-sm text-tide">
-                        {cardCvc}
-                      </div>
-                    </div>
-                  </div>
+                  </button>
 
-                  <div>
-                    <label className="block text-[11px] font-medium text-slate mb-1">Name on Card</label>
-                    <input
-                      type="text"
-                      value={cardHolder}
-                      onChange={(e) => setCardHolder(e.target.value)}
-                      className="w-full h-10 px-3 bg-white rounded-md text-sm text-tide focus:outline-none focus:ring-1 focus:ring-harbor"
-                    />
-                  </div>
+                  {/* GCash Option */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('gcash')}
+                    className={`p-3.5 rounded-xl border text-left transition flex flex-col justify-between ${
+                      paymentMethod === 'gcash'
+                        ? 'border-blue-600 bg-blue-50/50 ring-1 ring-blue-600'
+                        : 'border-sand hover:border-slate/40 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <Smartphone
+                        className={`w-5 h-5 ${
+                          paymentMethod === 'gcash' ? 'text-blue-600' : 'text-slate'
+                        }`}
+                      />
+                      <span className="text-[10px] font-bold bg-blue-600 text-white px-1.5 py-0.5 rounded">
+                        GCash
+                      </span>
+                    </div>
+                    <div className="mt-2">
+                      <span className="font-semibold text-sm text-tide block">GCash e-Wallet</span>
+                      <span className="text-[11px] text-slate block">Scan QR / Mobile</span>
+                    </div>
+                  </button>
+
+                  {/* Maya Option */}
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('maya')}
+                    className={`p-3.5 rounded-xl border text-left transition flex flex-col justify-between ${
+                      paymentMethod === 'maya'
+                        ? 'border-emerald-600 bg-emerald-50/50 ring-1 ring-emerald-600'
+                        : 'border-sand hover:border-slate/40 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <Wallet
+                        className={`w-5 h-5 ${
+                          paymentMethod === 'maya' ? 'text-emerald-600' : 'text-slate'
+                        }`}
+                      />
+                      <span className="text-[10px] font-bold bg-emerald-600 text-white px-1.5 py-0.5 rounded">
+                        Maya
+                      </span>
+                    </div>
+                    <div className="mt-2">
+                      <span className="font-semibold text-sm text-tide block">Maya Wallet</span>
+                      <span className="text-[11px] text-slate block">Balance & Credit</span>
+                    </div>
+                  </button>
                 </div>
+
+                {/* Card input mockup */}
+                {paymentMethod === 'card' && (
+                  <div className="p-4 bg-mist/60 rounded-lg space-y-3 animate-in fade-in duration-150">
+                    <div className="flex items-center justify-between text-xs text-slate">
+                      <span className="font-medium text-tide">Credit or Debit Card</span>
+                      <span className="tabular-nums tracking-widest text-[11px]">4242 Test Visa</span>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate mb-1">Card Number</label>
+                      <div className="w-full h-10 px-3 bg-white rounded-md flex items-center justify-between tabular-nums tracking-widest text-sm text-tide">
+                        <span>{cardNumber}</span>
+                        <CreditCard className="w-4 h-4 text-slate" />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-medium text-slate mb-1">Expires</label>
+                        <div className="w-full h-10 px-3 bg-white rounded-md flex items-center tabular-nums text-sm text-tide">
+                          {cardExpiry}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-medium text-slate mb-1">CVC</label>
+                        <div className="w-full h-10 px-3 bg-white rounded-md flex items-center tabular-nums tracking-widest text-sm text-tide">
+                          {cardCvc}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate mb-1">Name on Card</label>
+                      <input
+                        type="text"
+                        value={cardHolder}
+                        onChange={(e) => setCardHolder(e.target.value)}
+                        className="w-full h-10 px-3 bg-white rounded-md text-sm text-tide focus:outline-none focus:ring-1 focus:ring-harbor"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* GCash input panel */}
+                {paymentMethod === 'gcash' && (
+                  <div className="p-4 bg-blue-50/50 border border-blue-200/60 rounded-lg space-y-3 animate-in fade-in duration-150">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-blue-900">GCash Mobile Account</span>
+                      <span className="text-[11px] text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full font-medium">
+                        Instant Authorization
+                      </span>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate mb-1">
+                        GCash Mobile Number
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="tel"
+                          value={walletPhone}
+                          onChange={(e) => setWalletPhone(e.target.value)}
+                          placeholder="0917 123 4567"
+                          className="w-full h-10 px-3 pl-9 bg-white border border-blue-200 rounded-md text-sm text-tide focus:outline-none focus:ring-1 focus:ring-blue-600 tabular-nums"
+                        />
+                        <Smartphone className="w-4 h-4 text-blue-600 absolute left-3 top-3 pointer-events-none" />
+                      </div>
+                      <p className="text-[11px] text-slate mt-1.5">
+                        Upon placing your order, an authorization dialog will appear to confirm payment via your GCash mobile number.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Maya input panel */}
+                {paymentMethod === 'maya' && (
+                  <div className="p-4 bg-emerald-50/50 border border-emerald-200/60 rounded-lg space-y-3 animate-in fade-in duration-150">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-emerald-900">Maya Digital Wallet</span>
+                      <span className="text-[11px] text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full font-medium">
+                        Pay with Maya
+                      </span>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate mb-1">
+                        Maya Mobile Number
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="tel"
+                          value={walletPhone}
+                          onChange={(e) => setWalletPhone(e.target.value)}
+                          placeholder="0918 765 4321"
+                          className="w-full h-10 px-3 pl-9 bg-white border border-emerald-200 rounded-md text-sm text-tide focus:outline-none focus:ring-1 focus:ring-emerald-600 tabular-nums"
+                        />
+                        <Wallet className="w-4 h-4 text-emerald-600 absolute left-3 top-3 pointer-events-none" />
+                      </div>
+                      <p className="text-[11px] text-slate mt-1.5">
+                        You can approve the charge directly through the test authorization portal with your Maya account.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex items-start gap-2 text-xs text-slate">
                   <Lock className="w-3.5 h-3.5 mt-0.5 shrink-0 text-slate" />
                   <span>
-                    Your card credentials are cryptographically tokenized through Stripe. Concurrency locks prevent stock discrepancies.
+                    Your payment details are cryptographically secured. Concurrency locks reserve your provision inventory until payment completion.
                   </span>
                 </div>
               </div>
@@ -491,6 +682,129 @@ export default function CheckoutPage() {
           </form>
         )}
       </main>
+
+      {/* GCash / Maya Interactive E-Wallet Modal */}
+      {showWalletModal && pendingOrder && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="relative bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-sand animate-in fade-in zoom-in-95 duration-150">
+            {/* Branded Header */}
+            <div
+              className={`p-6 text-white text-center relative ${
+                paymentMethod === 'gcash' ? 'bg-[#007DFE]' : 'bg-[#00A859]'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setShowWalletModal(false)}
+                className="absolute right-4 top-4 text-white/80 hover:text-white p-1 rounded-full hover:bg-white/10 transition"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center mx-auto mb-3 backdrop-blur-xs shadow-inner">
+                {paymentMethod === 'gcash' ? (
+                  <Smartphone size={24} className="text-white" />
+                ) : (
+                  <Wallet size={24} className="text-white" />
+                )}
+              </div>
+
+              <h3 className="text-lg font-bold tracking-tight">
+                {paymentMethod === 'gcash' ? 'GCash Express Pay' : 'Pay with Maya'}
+              </h3>
+              <p className="text-xs text-white/80 mt-0.5">TrueHarbor Coastal Provisions</p>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-5">
+              <div className="text-center p-4 bg-mist/60 rounded-xl border border-sand">
+                <span className="text-xs text-slate uppercase tracking-wider block font-medium">
+                  Amount to Pay
+                </span>
+                <span className="text-3xl font-display font-extrabold text-tide tabular-nums block mt-1">
+                  {pendingOrder.formatted_total}
+                </span>
+                <span className="text-[11px] text-slate mt-0.5 block">
+                  Order #{pendingOrder.id} • Ref: {pendingOrder.payment_intent_id?.slice(0, 16)}...
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-deep uppercase tracking-wider mb-1">
+                  Connected Mobile Wallet
+                </label>
+                <div className="w-full h-10 px-3.5 bg-mist rounded-lg text-sm text-tide flex items-center justify-between font-mono">
+                  <span>{walletPhone}</span>
+                  <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    Verified
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-deep uppercase tracking-wider">
+                    {paymentMethod === 'gcash' ? '6-Digit MPIN / OTP' : '6-Digit OTP Code'}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setWalletOtp('123456')}
+                    className="text-[11px] text-harbor hover:underline font-medium"
+                  >
+                    Auto-fill Test Code
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={walletOtp}
+                  onChange={(e) => setWalletOtp(e.target.value.replace(/\D/g, ''))}
+                  className="w-full h-11 px-3 text-center text-xl tracking-[0.5em] font-mono rounded-lg border border-sand focus:ring-2 focus:ring-harbor outline-none"
+                  placeholder="••••••"
+                />
+                <p className="text-[11px] text-slate mt-1 text-center">
+                  Sandbox test environment: enter <strong className="text-deep font-mono">123456</strong> to simulate successful authorization.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2 pt-2">
+                <button
+                  type="button"
+                  onClick={handleConfirmWalletPayment}
+                  disabled={walletVerifying || walletOtp.length < 6}
+                  className={`w-full h-12 text-white font-semibold rounded-xl text-sm flex items-center justify-center gap-2 shadow-md transition disabled:opacity-50 ${
+                    paymentMethod === 'gcash'
+                      ? 'bg-[#007DFE] hover:bg-[#006ee0]'
+                      : 'bg-[#00A859] hover:bg-[#00964f]'
+                  }`}
+                >
+                  {walletVerifying ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Verifying with {paymentMethod === 'gcash' ? 'GCash' : 'Maya'}...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Authorize Payment of {pendingOrder.formatted_total}</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowWalletModal(false)}
+                  disabled={walletVerifying}
+                  className="w-full py-2 text-xs font-medium text-slate hover:text-tide transition text-center"
+                >
+                  Cancel and Return to Checkout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

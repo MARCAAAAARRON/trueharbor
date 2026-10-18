@@ -8,6 +8,9 @@ import {
   Clock,
   Printer,
   ShoppingBag,
+  CreditCard,
+  Smartphone,
+  Wallet,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -189,8 +192,23 @@ export default function OrderConfirmationPage() {
             </div>
             <div className="text-xs text-slate space-y-1.5 pt-1">
               <div>
-                <span className="block font-medium text-tide">Method:</span>
-                <span>Stripe Card Payment</span>
+                <span className="block font-medium text-tide mb-1">Method:</span>
+                {order.payment_method === 'gcash' ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                    <Smartphone size={13} className="text-blue-600" />
+                    GCash e-Wallet {order.payment_details?.account_number ? `(${order.payment_details.account_number})` : ''}
+                  </span>
+                ) : order.payment_method === 'maya' ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <Wallet size={13} className="text-emerald-600" />
+                    Maya Wallet {order.payment_details?.account_number ? `(${order.payment_details.account_number})` : ''}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-200">
+                    <CreditCard size={13} className="text-slate-600" />
+                    Credit / Debit Card
+                  </span>
+                )}
               </div>
               {order.payment_intent_id && (
                 <div>

@@ -1,11 +1,19 @@
 import client from './client';
 import type { Order, ShippingAddress, PaginatedResponse } from '../types/api';
 
+export interface CreateOrderInput {
+  shipping_address: ShippingAddress;
+  payment_method?: 'card' | 'gcash' | 'maya';
+  payment_details?: {
+    account_number?: string;
+    account_name?: string;
+  };
+}
+
 export const checkoutApi = {
-  createOrder: async (shippingAddress: ShippingAddress): Promise<Order> => {
-    const res = await client.post<{ data: Order }>('/checkout', {
-      shipping_address: shippingAddress,
-    });
+  createOrder: async (input: CreateOrderInput | ShippingAddress): Promise<Order> => {
+    const payload = 'shipping_address' in input ? input : { shipping_address: input };
+    const res = await client.post<{ data: Order }>('/checkout', payload);
     return res.data.data;
   },
 
