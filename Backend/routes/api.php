@@ -56,8 +56,14 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/products/low-stock', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'lowStock']);
     Route::post('/products', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'store']);
     Route::put('/products/{id}', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'update']);
+    Route::get('/products/{id}', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'show']);
     Route::patch('/products/{id}/stock', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'updateStock']);
     Route::delete('/products/{id}', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'destroy']);
+
+    // Product gallery images
+    Route::post('/products/{id}/images', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'addImage']);
+    Route::delete('/products/{id}/images/{imageId}', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'deleteImage']);
+    Route::patch('/products/{id}/images/{imageId}/primary', [\App\Http\Controllers\Api\Admin\AdminProductController::class, 'setPrimaryImage']);
 
     // Media upload signatures
     Route::get('/media/signature', [\App\Http\Controllers\Api\Admin\MediaController::class, 'signature']);

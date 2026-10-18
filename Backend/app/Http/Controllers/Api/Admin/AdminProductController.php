@@ -18,7 +18,7 @@ class AdminProductController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Product::with('category')->orderBy('id');
+        $query = Product::with(['category', 'images'])->orderBy('id');
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->query('category_id'));
@@ -40,7 +40,7 @@ class AdminProductController extends Controller
      */
     public function lowStock(): AnonymousResourceCollection
     {
-        $products = Product::with('category')
+        $products = Product::with(['category', 'images'])
             ->where('stock', '<=', 5)
             ->orderBy('stock')
             ->get();
@@ -139,5 +139,88 @@ class AdminProductController extends Controller
         $product->delete();
 
         return response()->json(['message' => 'Product removed successfully.']);
+    }
+
+    /**
+     * View single product with gallery images
+     */
+    public function show(int $id): ProductResource
+    {
+        $product = Product::with(['category', 'images'])->findOrFail($id);
+        return new ProductResource($product);
+    }
+
+    /**
+     * Add an image to a product gallery
+     */
+    public function addImage(Request $request, int $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'url' => ['required', 'string', 'max:1000'],
+            'alt_text' => ['nullable', 'string', 'max:255'],
+            'is_primary' => ['nullable', 'boolean'],
+        ]);
+
+        $product = Product::findOrFail($id);
+        $isPrimary = !empty($validated['is_primary']) || $product->images()->count() === 0;
+
+        if ($isPrimary) {
+            $product->images()->update(['is_primary' => false]);
+            $product->update(['image_path' => $validated['url']]);
+        }
+
+        $nextSort = ($product->images()->max('sort_order') ?? 0) + 1;
+
+        $image = $product->images()->create([
+            'url' => $validated['url'],
+            'alt_text' => $validated['alt_text'] ?? null,
+            'sort_order' => $nextSort,
+            'is_primary' => $isPrimary,
+        ]);
+
+        return (new \App\Http\Resources\ProductImageResource($image))
+            ->response()
+            ->setStatusCode(201);
+    }
+
+    /**
+     * Delete an image from a product gallery
+     */
+    public function deleteImage(int $productId, int $imageId): JsonResponse
+    {
+        $product = Product::findOrFail($productId);
+        $image = $product->images()->findOrFail($imageId);
+        $wasPrimary = $image->is_primary;
+
+        $image->delete();
+
+        if ($wasPrimary) {
+            $newPrimary = $product->images()->first();
+            if ($newPrimary) {
+                $newPrimary->update(['is_primary' => true]);
+                $product->update(['image_path' => $newPrimary->url]);
+            } else {
+                $product->update(['image_path' => null]);
+            }
+        }
+
+        return response()->json(['message' => 'Image removed from gallery.']);
+    }
+
+    /**
+     * Set a gallery image as primary
+     */
+    public function setPrimaryImage(int $productId, int $imageId): JsonResponse
+    {
+        $product = Product::findOrFail($productId);
+        $image = $product->images()->findOrFail($imageId);
+
+        $product->images()->update(['is_primary' => false]);
+        $image->update(['is_primary' => true]);
+        $product->update(['image_path' => $image->url]);
+
+        return (new \App\Http\Resources\ProductImageResource($image->fresh()))
+            ->response()
+            ->setStatusCode(200);
     }
 }

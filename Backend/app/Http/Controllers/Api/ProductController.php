@@ -55,7 +55,7 @@ class ProductController extends Controller
     public function show(string $slug): ProductDetailResource
     {
         $product = Product::query()
-            ->with('category')
+            ->with(['category', 'images'])
             ->active()
             ->where('slug', $slug)
             ->firstOrFail();

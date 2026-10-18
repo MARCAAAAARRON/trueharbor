@@ -42,6 +42,12 @@ class AdminMediaUploadTest extends TestCase
 
     public function test_admin_receives_upload_signature_in_mock_mode_when_unconfigured(): void
     {
+        config([
+            'services.cloudinary.cloud_name' => null,
+            'services.cloudinary.api_key' => null,
+            'services.cloudinary.api_secret' => null,
+        ]);
+
         Sanctum::actingAs($this->admin);
 
         $response = $this->getJson('/api/admin/media/signature');
