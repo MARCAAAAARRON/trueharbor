@@ -90,6 +90,26 @@ npm run dev
 
 ---
 
+## 🚢 Deployment on Render (Unified Docker Container)
+
+TrueHarbor includes a production multi-stage [`Dockerfile`](file:///c:/TrueHarbor/Dockerfile) that bundles both the React 19 Frontend and Laravel 13 Backend into a **single unified container** served by Nginx and PHP-FPM.
+
+### One-Click Blueprint Setup:
+1. Push your repository to GitHub.
+2. In the [Render Dashboard](https://dashboard.render.com), click **New +** → **Blueprint**.
+3. Select this repository. Render automatically reads [`render.yaml`](file:///c:/TrueHarbor/render.yaml).
+4. Fill in your environment secrets (`DB_HOST`, `DB_PASSWORD`, `CLOUDINARY_*`, `STRIPE_*`).
+5. Click **Apply**. Render will automatically build the React app, configure Laravel, run database migrations, and deploy to a live HTTPS URL (e.g. `https://trueharbor.onrender.com`).
+
+### Manual Web Service Setup:
+1. Click **New +** → **Web Service**.
+2. Connect your GitHub repository.
+3. Select **Docker** environment (Render auto-detects root `Dockerfile`).
+4. Add your environment variables from the table below.
+5. Deploy!
+
+---
+
 ## 🔑 Environment Configuration
 
 Key configuration parameters inside [`Backend/.env`](file:///c:/TrueHarbor/Backend/.env):

@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: trueharbor
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: singapore
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_NAME
+        value: TrueHarbor
+      - key: AUTO_MIGRATE
+        value: "true"
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_DATABASE
+        value: postgres
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: STRIPE_KEY
+        sync: false
+      - key: STRIPE_SECRET
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
