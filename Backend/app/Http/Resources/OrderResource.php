@@ -21,6 +21,8 @@ class OrderResource extends JsonResource
             'formatted_total' => '₱' . number_format($this->total_cents / 100, 2),
             'shipping_address' => $this->shipping_address,
             'payment_intent_id' => $this->payment_intent_id,
+            'payment_method' => $this->payment_method ?? 'card',
+            'payment_details' => $this->payment_details,
             'client_secret' => $this->when(isset($this->client_secret), $this->client_secret),
             'payment_intent_client_secret' => $this->when(isset($this->client_secret), $this->client_secret),
             'items' => OrderItemResource::collection($this->whenLoaded('items')),

@@ -20,6 +20,8 @@ class Order extends Model
         'total_cents',
         'shipping_address',
         'payment_intent_id',
+        'payment_method',
+        'payment_details',
         'expires_at',
         'paid_at',
     ];
@@ -32,6 +34,7 @@ class Order extends Model
             'shipping_cents' => 'integer',
             'total_cents' => 'integer',
             'shipping_address' => 'array',
+            'payment_details' => 'array',
             'expires_at' => 'datetime',
             'paid_at' => 'datetime',
         ];

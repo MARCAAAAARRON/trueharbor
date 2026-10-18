@@ -25,9 +25,21 @@ class CheckoutController extends Controller
             'shipping_address.province' => ['required', 'string', 'max:100'],
             'shipping_address.postal_code' => ['required', 'string', 'max:20'],
             'shipping_address.phone' => ['required', 'string', 'max:30'],
+            'payment_method' => ['nullable', 'string', 'in:card,gcash,maya'],
+            'payment_details' => ['nullable', 'array'],
+            'payment_details.account_number' => ['nullable', 'string', 'max:50'],
+            'payment_details.account_name' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $order = $orderService->createFromCart($request->user(), $validated['shipping_address']);
+        $paymentMethod = $validated['payment_method'] ?? 'card';
+        $paymentDetails = $validated['payment_details'] ?? null;
+
+        $order = $orderService->createFromCart(
+            $request->user(),
+            $validated['shipping_address'],
+            $paymentMethod,
+            $paymentDetails
+        );
 
         return new OrderResource($order);
     }

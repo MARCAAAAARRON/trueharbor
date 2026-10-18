@@ -35,6 +35,7 @@ class PaymentService
                     'metadata' => [
                         'order_id' => (string) $order->id,
                         'user_id' => (string) $order->user_id,
+                        'payment_method' => (string) ($order->payment_method ?? 'card'),
                     ],
                     'automatic_payment_methods' => [
                         'enabled' => true,
@@ -50,7 +51,8 @@ class PaymentService
         }
 
         // Test / local development mock
-        $mockId = 'pi_test_' . $order->id . '_' . bin2hex(random_bytes(6));
+        $method = $order->payment_method ?? 'card';
+        $mockId = 'pi_test_' . $method . '_' . $order->id . '_' . bin2hex(random_bytes(6));
         $mockSecret = $mockId . '_secret_' . bin2hex(random_bytes(10));
 
         $order->update(['payment_intent_id' => $mockId]);

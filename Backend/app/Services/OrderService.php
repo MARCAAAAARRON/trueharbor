@@ -24,7 +24,12 @@ class OrderService
      * @return Order
      * @throws ValidationException
      */
-    public function createFromCart(User $user, array $shippingAddress): Order
+    public function createFromCart(
+        User $user,
+        array $shippingAddress,
+        string $paymentMethod = 'card',
+        ?array $paymentDetails = null
+    ): Order
     {
         $cart = Cart::with('items')->firstOrCreate(['user_id' => $user->id]);
 
@@ -34,7 +39,7 @@ class OrderService
             ]);
         }
 
-        $order = DB::transaction(function () use ($cart, $user, $shippingAddress) {
+        $order = DB::transaction(function () use ($cart, $user, $shippingAddress, $paymentMethod, $paymentDetails) {
             $productIds = $cart->items->pluck('product_id')->sort()->values()->all();
 
             // Row-level lock ordered by ID to eliminate overselling and deadlocks
@@ -78,6 +83,8 @@ class OrderService
                 'shipping_cents' => $shippingCents,
                 'total_cents' => $totalCents,
                 'shipping_address' => $shippingAddress,
+                'payment_method' => $paymentMethod,
+                'payment_details' => $paymentDetails,
                 'expires_at' => now()->addMinutes(30),
             ]);
 
