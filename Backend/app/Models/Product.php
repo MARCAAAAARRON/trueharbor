@@ -33,6 +33,11 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)->orderBy('sort_order')->orderBy('id');
     }
 
+    public function reviews(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ProductReview::class)->latest();
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);

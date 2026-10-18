@@ -28,6 +28,8 @@ class ProductResource extends JsonResource
             'is_active' => $this->is_active,
             'category' => new CategoryResource($this->whenLoaded('category')),
             'images' => ProductImageResource::collection($this->whenLoaded('images')),
+            'reviews_count' => (int) ($this->reviews_count ?? ($this->relationLoaded('reviews') ? $this->reviews->count() : 0)),
+            'average_rating' => round((float) ($this->reviews_avg_rating ?? ($this->relationLoaded('reviews') ? ($this->reviews->count() > 0 ? $this->reviews->avg('rating') : 0.0) : 0.0)), 1),
         ];
     }
 }

@@ -21,7 +21,11 @@ class ProductController extends Controller
             'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
         ]);
 
-        $query = Product::query()->with('category')->active();
+        $query = Product::query()
+            ->with('category')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->active();
 
         if (!empty($params['q'])) {
             $term = addcslashes($params['q'], '%_\\');
@@ -56,6 +60,8 @@ class ProductController extends Controller
     {
         $product = Product::query()
             ->with(['category', 'images'])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
             ->active()
             ->where('slug', $slug)
             ->firstOrFail();
