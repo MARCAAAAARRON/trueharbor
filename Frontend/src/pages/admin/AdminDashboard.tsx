@@ -11,10 +11,12 @@ import {
   XCircle,
   RefreshCw,
   X,
+  Edit2,
 } from 'lucide-react';
 import AdminNavbar from '../../components/admin/AdminNavbar';
 import Button from '../../components/Button';
 import StatusChip from '../../components/StatusChip';
+import ImageUploader from '../../components/admin/ImageUploader';
 import { useToast } from '../../context/ToastContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import { adminApi, type CreateProductInput } from '../../api/admin';
@@ -59,6 +61,29 @@ export default function AdminDashboard() {
   });
   const [createSubmitting, setCreateSubmitting] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+
+  // Edit Product Modal State
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editForm, setEditForm] = useState<Partial<CreateProductInput>>({});
+  const [editSubmitting, setEditSubmitting] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+    try {
+      setEditSubmitting(true);
+      setEditError(null);
+      const updated = await adminApi.updateProduct(editingProduct.id, editForm);
+      setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+      toast.success(`Provision "${updated.name}" updated successfully.`);
+      setEditingProduct(null);
+    } catch (err: unknown) {
+      setEditError(err instanceof Error ? err.message : 'Failed to update provision.');
+    } finally {
+      setEditSubmitting(false);
+    }
+  };
 
   // Fetch Orders
   const fetchOrders = useCallback(async () => {
@@ -614,6 +639,27 @@ export default function AdminDashboard() {
                             Healthy Stock
                           </span>
                         )}
+
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => {
+                            setEditingProduct(product);
+                            setEditForm({
+                              name: product.name,
+                              category_id: product.category?.id || 1,
+                              description: product.description || '',
+                              price_cents: product.price_cents,
+                              stock: product.stock ?? 0,
+                              image_path: product.image_path || '',
+                            });
+                          }}
+                          className="h-8 px-2.5 text-xs text-slate hover:text-harbor"
+                          title="Edit provision and photo"
+                        >
+                          <Edit2 className="w-3.5 h-3.5 mr-1" />
+                          Edit
+                        </Button>
                       </div>
                     </div>
                   );
@@ -794,6 +840,12 @@ export default function AdminDashboard() {
                 </span>
               </div>
 
+              {/* Cloudinary Image Uploader */}
+              <ImageUploader
+                value={createForm.image_path}
+                onChange={(url) => setCreateForm({ ...createForm, image_path: url })}
+              />
+
               <div>
                 <label className="block text-xs font-medium text-tide mb-1">Description</label>
                 <textarea
@@ -822,6 +874,136 @@ export default function AdminDashboard() {
                   className="h-9 px-5 text-xs font-semibold"
                 >
                   {createSubmitting ? 'Registering...' : 'Register Provision'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT PRODUCT MODAL */}
+      {editingProduct && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="fixed inset-0 bg-tide/50 transition-opacity"
+            onClick={() => setEditingProduct(null)}
+          />
+
+          <div className="relative w-full max-w-lg bg-white rounded-xl p-6 sm:p-8 space-y-5 z-10 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-display font-bold text-tide">Edit Maritime Provision</h2>
+              <button
+                type="button"
+                onClick={() => setEditingProduct(null)}
+                className="p-1 rounded-md text-slate hover:text-tide"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {editError && (
+              <div className="bg-red-50 text-red-700 p-3 rounded-lg text-xs">{editError}</div>
+            )}
+
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-tide mb-1">Provision Name</label>
+                <input
+                  type="text"
+                  required
+                  value={editForm.name ?? ''}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="w-full h-10 px-3 text-xs bg-mist rounded-md focus:outline-none focus:ring-1 focus:ring-harbor text-tide"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-tide mb-1">Category</label>
+                  <select
+                    value={editForm.category_id ?? 1}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, category_id: parseInt(e.target.value, 10) })
+                    }
+                    className="w-full h-10 px-3 text-xs bg-mist rounded-md focus:outline-none focus:ring-1 focus:ring-harbor text-tide"
+                  >
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-tide mb-1">Live Stock</label>
+                  <input
+                    type="number"
+                    min="0"
+                    required
+                    value={editForm.stock ?? 0}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, stock: parseInt(e.target.value, 10) || 0 })
+                    }
+                    className="w-full h-10 px-3 text-xs bg-mist rounded-md focus:outline-none focus:ring-1 focus:ring-harbor text-tide"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-tide mb-1">Price (in Centavos)</label>
+                <input
+                  type="number"
+                  min="0"
+                  required
+                  value={editForm.price_cents ?? 0}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, price_cents: parseInt(e.target.value, 10) || 0 })
+                  }
+                  className="w-full h-10 px-3 text-xs bg-mist rounded-md focus:outline-none focus:ring-1 focus:ring-harbor text-tide"
+                />
+                <span className="text-[11px] text-slate mt-1 block">
+                  Preview: {formatPrice(editForm.price_cents ?? 0)}
+                </span>
+              </div>
+
+              {/* Cloudinary Image Uploader */}
+              <ImageUploader
+                value={editForm.image_path}
+                onChange={(url) => setEditForm({ ...editForm, image_path: url })}
+              />
+
+              <div>
+                <label className="block text-xs font-medium text-tide mb-1">Description</label>
+                <textarea
+                  required
+                  rows={3}
+                  value={editForm.description ?? ''}
+                  onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                  className="w-full p-3 text-xs bg-mist rounded-md focus:outline-none focus:ring-1 focus:ring-harbor text-tide"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setEditingProduct(null)}
+                  className="h-9 px-4 text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={editSubmitting}
+                  className="h-9 px-5 text-xs font-semibold"
+                >
+                  {editSubmitting ? 'Saving Changes...' : 'Save Provision Changes'}
                 </Button>
               </div>
             </form>

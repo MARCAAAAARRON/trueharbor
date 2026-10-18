@@ -12,6 +12,17 @@ export interface CreateProductInput {
   is_active?: boolean;
 }
 
+export interface CloudinarySignatureData {
+  configured: boolean;
+  cloud_name: string;
+  api_key: string;
+  timestamp: number;
+  signature: string;
+  folder: string;
+  upload_url?: string | null;
+  mock?: boolean;
+}
+
 export const adminApi = {
   // Orders
   getOrders: async (
@@ -85,5 +96,46 @@ export const adminApi = {
   cancelOrder: async (id: number): Promise<Order> => {
     const res = await client.post<{ data: Order }>(`/orders/${id}/cancel`);
     return res.data.data;
+  },
+
+  // Media & Cloudinary Storage
+  getMediaSignature: async (folder: string = 'trueharbor/products'): Promise<CloudinarySignatureData> => {
+    const res = await client.get<{ data: CloudinarySignatureData }>(
+      `/admin/media/signature?folder=${encodeURIComponent(folder)}`
+    );
+    return res.data.data;
+  },
+
+  uploadProductImage: async (file: File): Promise<string> => {
+    const sig = await adminApi.getMediaSignature('trueharbor/products');
+
+    if (sig.configured && sig.upload_url) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('api_key', sig.api_key);
+      formData.append('timestamp', String(sig.timestamp));
+      formData.append('signature', sig.signature);
+      formData.append('folder', sig.folder);
+
+      const response = await fetch(sig.upload_url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Cloudinary upload failed. Check file format and size.');
+      }
+
+      const data = await response.json();
+      return data.secure_url;
+    }
+
+    // Local / development test mock: return data URL for immediate preview and testing
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error('Failed to read image file'));
+      reader.readAsDataURL(file);
+    });
   },
 };
