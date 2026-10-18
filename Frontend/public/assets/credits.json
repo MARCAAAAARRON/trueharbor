@@ -1,5 +1,29 @@
 [
  {
+  "file": "Frontend/public/images/lighthouse.jpg",
+  "media": "image",
+  "ref": "trueharbor:pigeon-point-lighthouse",
+  "title": "Pigeon Point Light Station",
+  "creator": "TrueHarbor Coastal Archive",
+  "creatorUrl": null,
+  "date": "2026",
+  "license": "editorial / brand collection",
+  "licenseCode": "editorial",
+  "licenseUrl": null,
+  "creditRequired": false,
+  "page": "docs/images/lighthouse.jpg",
+  "via": "TrueHarbor Heritage Assets",
+  "image": "/images/lighthouse.jpg",
+  "width": 6000,
+  "height": 3376,
+  "bytes": 828522,
+  "credit": "Pigeon Point Light Station, San Mateo County, Pacific Coast",
+  "notes": [
+   "High-resolution 6000x3376 coastal photography with optimized 2560px retina delivery for TrueHarbor landing page hero showcase."
+  ],
+  "saved": "2026-10-18T13:42:00.000Z"
+ },
+ {
   "file": "Frontend/public/assets/a-coastal-view-with-a-lighthouse.jpg",
   "media": "image",
   "ref": "commons:62519936",

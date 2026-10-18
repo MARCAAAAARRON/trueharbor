@@ -20,7 +20,7 @@ export default function Button({
     primary: "bg-harbor text-white hover:bg-harbor-hover active:bg-harbor-hover focus-visible:outline-2 focus-visible:outline-harbor",
     secondary: "bg-white text-harbor border border-harbor hover:bg-wash active:bg-wash",
     outline: "bg-white text-harbor border border-harbor hover:bg-wash active:bg-wash",
-    'on-blue': "bg-white dark:bg-white text-[#002459] dark:text-[#002459] hover:bg-slate-100 active:bg-slate-200 dark:hover:bg-slate-100 shadow-sm",
+    'on-blue': "bg-white dark:bg-white text-[#002459] dark:text-[#002459] hover:bg-slate-100 active:bg-slate-200 dark:hover:bg-slate-100",
     ghost: "bg-transparent text-harbor hover:bg-wash active:bg-wash",
     destructive: "bg-buoy text-white hover:bg-red-700 active:bg-red-800",
   };

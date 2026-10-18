@@ -60,53 +60,49 @@ export default function HomePage() {
     <div className="min-h-svh flex flex-col bg-mist overflow-x-clip">
       <Navbar />
 
-      {/* Hero Banner with authentic Lighthouse Photography & Coastal Atmospheric Overlay */}
-      <section className="relative text-white px-6 py-16 sm:py-24 lg:py-28 overflow-hidden bg-harbor dark:bg-[#070e1b]">
-        {/* Photographic Background */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/images/lighthouse.jpeg"
-            alt="TrueHarbor Coastal Lighthouse"
-            className="w-full h-full object-cover object-[75%_center] sm:object-right select-none opacity-90"
-          />
-          {/* Gradient Scrim: Deep harbor blue fading from solid/high-opacity on left to translucent on right */}
-          <div className="absolute inset-0 bg-gradient-to-r from-harbor/95 via-harbor/85 to-harbor/30 sm:to-transparent dark:from-[#070e1b]/98 dark:via-[#070e1b]/85 dark:to-transparent" />
-          {/* Subtle bottom vignette to blend into next section */}
-          <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-harbor/40 dark:from-[#070e1b]/60 to-transparent" />
-        </div>
-
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
-          <div className="w-full lg:max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/15 dark:bg-white/10 backdrop-blur-md rounded-full text-xs sm:text-sm font-semibold text-white mb-6 animate-enter-1 shadow-xs border border-white/20">
-              <span className="w-2 h-2 rounded-full bg-lantern animate-pulse" />
-              <span>Coastal-Grade Essentials • Real-Time Inventory</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white mb-6 leading-tight tracking-tight max-w-lg animate-enter-2 drop-shadow-sm">
-              Everyday things,<br className="hidden sm:inline" /> found easily.
+      {/* Hero Showcase with authentic Pigeon Point Lighthouse Photography */}
+      <section className="bg-harbor dark:bg-[#070e1b] text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[560px] lg:min-h-[620px]">
+          {/* Left Column: Typographic & Action Center */}
+          <div className="lg:col-span-6 px-6 sm:px-10 lg:px-12 py-14 sm:py-20 lg:py-24 flex flex-col justify-center">
+            <h1 className="text-4xl sm:text-5xl lg:text-[54px] font-display font-bold text-white mb-5 leading-[1.08] tracking-tight max-w-lg animate-enter-1">
+              Everyday things,<br />found easily.
             </h1>
 
-            <p className="text-slate-100 dark:text-slate-200 text-base sm:text-lg mb-8 max-w-lg leading-relaxed animate-enter-3 drop-shadow-2xs">
-              Curated essentials with honest stock counts, precision pricing, and instant checkout dispatch.
+            <p className="text-slate-100 text-base sm:text-lg mb-8 max-w-md leading-relaxed animate-enter-2">
+              Curated coastal gear and harbor essentials with verified stock, integer-cents pricing, and same-day dispatch.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 animate-enter-4">
+            <div className="flex flex-wrap items-center gap-4 animate-enter-3">
               <Link to="/products">
-                <Button variant="on-blue" className="h-12 px-6 text-base font-semibold shadow-md">
+                <Button variant="on-blue" className="h-12 px-7 text-base font-semibold rounded-sm shadow-none">
                   Explore Catalog
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
               <Link to="/products?category=outdoor">
-                <span className="text-base font-medium text-white/95 hover:text-white underline underline-offset-4 decoration-lantern decoration-2">
+                <span className="text-base font-medium text-white hover:text-lantern transition-colors underline underline-offset-4 decoration-lantern decoration-2">
                   View Outdoor Gear →
                 </span>
               </Link>
             </div>
+
+            {/* Maritime Provenance Note */}
+            <div className="mt-12 flex flex-wrap items-center justify-between gap-3 text-[13px] text-slate-200 animate-enter-4">
+              <span className="tracking-wide">Pigeon Point Light Station • Pacific Coast</span>
+              <span className="text-slate-200">Atomic Stock Reservoirs</span>
+            </div>
           </div>
 
-          {/* Right Stage: Visual breathing room letting the photographic lighthouse shine */}
-          <div className="hidden lg:block w-72 h-48 pointer-events-none" aria-hidden="true" />
+          {/* Right Column: Hero Lighthouse Photography in Pure, Crisp Form */}
+          <div className="lg:col-span-6 relative min-h-[360px] sm:min-h-[440px] lg:min-h-full overflow-hidden bg-[#001c44] animate-enter-2">
+            <img
+              src="/images/lighthouse.jpg"
+              alt="Pigeon Point Lighthouse standing watch over the Pacific coast"
+              className="w-full h-full object-cover object-[72%_center] select-none"
+              loading="eager"
+            />
+          </div>
         </div>
       </section>
 
@@ -146,17 +142,17 @@ export default function HomePage() {
               <Link
                 key={cat.id}
                 to={`/products?category=${cat.slug}`}
-                className={`group flex flex-col bg-white rounded-xl border border-fog/70 dark:border-white/10 overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-1 animate-enter-${(idx % 4) + 1}`}
+                className={`group flex flex-col bg-white rounded-xl overflow-hidden transition-transform duration-200 hover:-translate-y-1 animate-enter-${(idx % 4) + 1}`}
               >
-                <div className="aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-mist/70 to-mist/30 dark:from-white/5 dark:to-transparent relative flex items-center justify-center p-6">
+                <div className="aspect-[4/3] w-full overflow-hidden bg-mist/60 dark:bg-white/5 relative flex items-center justify-center p-6">
                   <img
                     src={asset.image}
                     alt={asset.alt}
-                    className="w-full h-full max-h-36 object-contain group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300 drop-shadow-md select-none"
+                    className="w-full h-full max-h-36 object-contain group-hover:scale-105 group-hover:-translate-y-0.5 transition-transform duration-300 select-none"
                     loading="lazy"
                   />
                 </div>
-                <div className="p-5 flex items-center justify-between border-t border-fog/40 dark:border-white/5">
+                <div className="p-5 flex items-center justify-between bg-white dark:bg-card">
                   <div>
                     <h3 className="font-display font-semibold text-lg text-tide group-hover:text-harbor transition-colors">
                       {cat.name}
@@ -193,7 +189,7 @@ export default function HomePage() {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-lg p-4 animate-pulse">
+              <div key={i} className="bg-white rounded-lg p-4 animate-pulse taste-skill-ignore">
                 <div className="aspect-square bg-fog/60 rounded mb-4" />
                 <div className="h-4 bg-fog/60 rounded w-3/4 mb-2" />
                 <div className="h-4 bg-fog/60 rounded w-1/2" />
